@@ -1,0 +1,138 @@
+package com.example.damgame.fragments;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import com.example.damgame.R;
+import com.example.damgame.interfaces.InterfaceDialogs;
+import com.example.damgame.model.Question;
+import com.example.damgame.utils.GameUtil;
+
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+
+/**
+ * Cuadro de diálogo para mostrar la pregunta cunado se produce una colisión entre
+ * flappy y un obstáculo
+ * @author 2º DAM - IES Antonio Gala
+ * @version 1.0
+ */
+public class QuestionDialogFragment extends DialogFragment
+{
+    private Question question;
+    private AlertDialog.Builder builder;
+    private Button btConfirmar;
+    private InterfaceDialogs interfaceDialogs;
+
+    public QuestionDialogFragment(Question question, InterfaceDialogs interfaceDialogs){
+        this.question = question;
+        this.interfaceDialogs = interfaceDialogs;
+    }
+
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        builder = new AlertDialog.Builder(getActivity());
+        switch(this.question.getTipo()) {
+            case GameUtil.PREGUNTA_MULTIPLE:
+                break;
+            case GameUtil.PREGUNTA_SIMPLE:
+                return crearPreguntaSimple();
+            case GameUtil.PREGUNTA_LISTA:
+                break;
+        }
+        return null;
+    }
+    private Dialog crearPreguntaMultiple(AlertDialog.Builder builder){
+        return null;
+    }
+
+    /**
+     * Devuelve el cuadro de diálogo para una pregunta de tipo simple
+     * @return Dialog el cuadro de diálogo
+     */
+    private Dialog crearPreguntaSimple(){
+        //RADIOBUTTON
+        View dialogView = getActivity().getLayoutInflater().
+                inflate(R.layout.pregunta_simple,null);
+        builder.setView(dialogView);
+        TextView tvEnunciado = dialogView.findViewById(R.id.tvPregunta);
+        tvEnunciado.setText(question.getEnunciado());
+        RadioGroup rgRes = dialogView.findViewById(R.id.rgRes);
+        for(int i=0;i<rgRes.getChildCount();i++) {
+            RadioButton rbRes = (RadioButton)rgRes.getChildAt(i);
+            if (i > question.getRespuestas().length-1)
+                rbRes.setVisibility(View.GONE);
+            else {
+                rbRes.setText(question.getRespuestas()[i]);
+                rbRes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        btConfirmar.setEnabled(true);
+                    }
+                });
+            }
+        }
+
+        LinearLayout lyQuestionDialog = dialogView.findViewById(R.id.lyQuestionDialog);
+
+        LinearLayout lyQuestion = dialogView.findViewById(R.id.lyQuestion);
+
+        LinearLayout lyPuntos = dialogView.findViewById(R.id.lyPuntos);
+
+        RadioGroup rgPuntos = dialogView.findViewById(R.id.rgPuntos);
+
+        if(question.getComplejidad()== GameUtil.PREGUNTA_COMPLEJIDAD_ALTA) {
+            rgPuntos.setVisibility(View.VISIBLE);
+            RadioButton rbPuntos = dialogView.findViewById(R.id.rbPuntos);
+            rbPuntos.setText(String.valueOf(question.getPuntos())+ getString(R.string.puntos));
+        }
+        this.btConfirmar = dialogView.findViewById(R.id.btOk);
+        this.btConfirmar.setEnabled(false);
+
+        this.btConfirmar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String respuesta = ((RadioButton)dialogView.findViewById(rgRes.getCheckedRadioButtonId())).getText().toString();
+                interfaceDialogs.setRespuesta(respuesta);
+                QuestionDialogFragment.this.dismiss();
+            }
+        });
+
+        //personalizar según el tema elegido
+        String tema = getDefaultSharedPreferences(getActivity()).getString("theme_setting","100");
+        switch(tema){
+            case "@string/TEMA_DESIERTO":
+                lyQuestionDialog.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_out));
+                lyQuestion.setBackground(getResources().getDrawable(R.drawable.desert_bg));
+                lyPuntos.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_out));
+                rgPuntos.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_in));
+                btConfirmar.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_out));
+                break;
+            default:
+                lyQuestionDialog.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_out));
+                lyQuestion.setBackground(getResources().getDrawable(R.drawable.desert_bg));
+                lyPuntos.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_out));
+                rgPuntos.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_in));
+                btConfirmar.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_out));
+                break;
+        }
+
+        Dialog dialog =  builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
+    }
+}
