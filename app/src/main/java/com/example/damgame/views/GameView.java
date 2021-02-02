@@ -148,6 +148,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         this.gameConfig.setFramesToNewQuestion(this.gameConfig.getFramesToNewQuestion()-1);
 
         //las preguntas aparecen
+        //Actividad 4.8 PMDM
         for(QuestionView goQuestion: this.play.getQuestionViews())
             goQuestion.updatePosition();
 

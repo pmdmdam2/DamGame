@@ -34,7 +34,15 @@ public class QuestionView {
         altoSprite =this.scene.getQuestionViewHeight();
         estado=-1; //recien creado
         this.questionBitmap = play.getScene().getQuestionViewBitmap(question.getComplejidad());
-        //creación y control del sonido de la captura de la pregunta
+        //asociación del sonido de la captura de la pregunta
+
+        //Actividad 4.8 PMDM
+        //probabilidad pregunta sencilla 80%, de pregunta difícil 20%
+
+        //cálculo de dirección aleatoria de cada pregunta generada
+
+
+
     }
     public QuestionView(Play play, Question question, float x, float y){
         this(play, question);
