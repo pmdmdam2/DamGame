@@ -25,6 +25,7 @@ public class BouncyView {
     private GameView gameView;
     private GameConfig gameConfig;
 
+
     public BouncyView(GameView gameView) {
         this.gameView = gameView;
         Scene scene = this.gameView.getScene();
@@ -37,6 +38,7 @@ public class BouncyView {
         this.velocidadVertical = scene.getScreenWidth() * 10 / 1080;
         this.bouncyBitmap = scene.getBouncyViewBitmap();
         this.gravity = this.gameConfig.getGravity();
+
         offset = -1; //recien creado
         //creación y control del sonido asociado al movimiento del objeto principal
     }

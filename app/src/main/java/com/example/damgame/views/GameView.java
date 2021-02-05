@@ -1,5 +1,6 @@
 package com.example.damgame.views;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -43,12 +44,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
     //imágenes para preguntas
     private QuestionView goEasyQuestion;
     private QuestionView goDificultQuestion;
-    private Bitmap imagenes[];
+    private Bitmap[] imagenes;
     //Controlador de toque en la pantalla
     private TouchController touchController;
     //Controlador de audio
     private AudioController audioController;
-
+    public GameView(Context context){super(context);}
     public GameView(GameActivity gameActivity) {
         super(gameActivity);
         this.gameActivity = gameActivity;
@@ -72,7 +73,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         //ambiente
         this.sceneLoad();
         //preguntas
-        //this.questionLoad();
+        this.questionLoad();
+        //se controlan los toques en pantalla
         this.setOnTouchListener(this.touchController);
     }
     public void render(Canvas canvas){
@@ -117,9 +119,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
                 }
             }
 
-            /*dibuja las preguntas
+            //--------------------------------------------------------------------------------------
+            //Actividad 4.8 PMDM
+            //--------------------------------------------------------------------------------------
+            //dibuja las preguntas
             for(QuestionView questionView: this.play.getQuestionViews())
-                questionView.draw(canvas,myPaint);*/
+                questionView.draw(canvas,myPaint);
 
             //aquí se dibujarán la animación de captura de una pregunta
 
@@ -139,20 +144,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
 
         this.updateSceneBackground();
 
-        /*Enemigos*/
+        //-----------------------------------------------------------------------------------------
+        //Actividad 4.8 PMDM
+        //-----------------------------------------------------------------------------------------
+        //se calculan los frames para crear una nueva pregunta
         if(this.gameConfig.getFramesToNewQuestion()==0){
             this.createNewQuestion();
-            //nuevo ciclo de enemigos
+            //nuevo ciclo de preguntas
             this.gameConfig.setFramesToNewQuestion(GameLoop.MAX_FPS*60/this.gameConfig.getMinutesToQuestion());
         }
         this.gameConfig.setFramesToNewQuestion(this.gameConfig.getFramesToNewQuestion()-1);
 
-        //las preguntas aparecen
+        //-----------------------------------------------------------------------------------------
         //Actividad 4.8 PMDM
+        //-----------------------------------------------------------------------------------------
+        //las preguntas aparecen y se mueven
         for(QuestionView goQuestion: this.play.getQuestionViews())
             goQuestion.updatePosition();
+        //-----------------------------------------------------------------------------------------
 
-        //colisiones
+        //caputura de las preguntas
 
         //actualizar flappy
         if(!this.bouncyView.isLanded()) {
@@ -175,12 +186,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         for(int i=0;i<backgroundScenes.length;i++) {
             Bitmap ambientRes = BitmapFactory.decodeResource(getResources(), backgroundScenes[i]);
             if(imagenes[i]==null)
-                imagenes[i] = ambientRes.createScaledBitmap(ambientRes,
+                imagenes[i] = Bitmap.createScaledBitmap(ambientRes,
                         this.play.getScene().getScreenWidth(),
                         this.play.getScene().getScreenHeight(), true);
             ambientRes.recycle();
         }
     }
+    //-----------------------------------------------------------------------------------------
+    //Actividad 4.8 PMDM
+    //-----------------------------------------------------------------------------------------
+    //se cargan las preguntas
     public void questionLoad(){
         GameConfig gameConfig = this.gameActivity.getGameConfig();
         gameConfig.setFramesToNewQuestion(GameLoop.MAX_FPS*60/ gameConfig.getMinutesToQuestion());
@@ -191,6 +206,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         else
             this.goEasyQuestion = goQuestion;
     }
+    //-----------------------------------------------------------------------------------------
+    //Actividad 4.8 PMDM
+    //-----------------------------------------------------------------------------------------
+    //se añade una nueva pregunta al array de preguntas
     public void createNewQuestion(){
         if(this.gameActivity.getGameConfig().getQuestions()-
             this.play.getQuestionsCreated()>0){

@@ -17,4 +17,7 @@ public abstract class GameUtil {
     public static final int TEMA_HIELO=103;
     public static final int TEMA_SELVA=104;
     public static final int TEMA_SUBMARINO=105;
+    public static final int HIGH_COMPLEX_SPEED=5;
+    public static final int LOW_COMPLEX_SPEED=2;
+    public static final int POINTS_TO_CHANGE_LEVEL=2000;
 }

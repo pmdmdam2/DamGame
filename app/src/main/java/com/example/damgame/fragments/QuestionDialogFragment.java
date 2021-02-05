@@ -14,9 +14,10 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
 import com.example.damgame.R;
-import com.example.damgame.interfaces.InterfaceDialogs;
+import com.example.damgame.interfaces.InterfaceDialog;
 import com.example.damgame.model.Question;
 import com.example.damgame.utils.GameUtil;
 
@@ -33,11 +34,11 @@ public class QuestionDialogFragment extends DialogFragment
     private Question question;
     private AlertDialog.Builder builder;
     private Button btConfirmar;
-    private InterfaceDialogs interfaceDialogs;
+    private InterfaceDialog interfaceDialog;
 
-    public QuestionDialogFragment(Question question, InterfaceDialogs interfaceDialogs){
+    public QuestionDialogFragment(Question question, InterfaceDialog interfaceDialog){
         this.question = question;
-        this.interfaceDialogs = interfaceDialogs;
+        this.interfaceDialog = interfaceDialog;
     }
 
 
@@ -97,7 +98,7 @@ public class QuestionDialogFragment extends DialogFragment
         if(question.getComplejidad()== GameUtil.PREGUNTA_COMPLEJIDAD_ALTA) {
             rgPuntos.setVisibility(View.VISIBLE);
             RadioButton rbPuntos = dialogView.findViewById(R.id.rbPuntos);
-            rbPuntos.setText(String.valueOf(question.getPuntos())+ getString(R.string.puntos));
+            rbPuntos.setText(question.getPuntos()+ getString(R.string.puntos));
         }
         this.btConfirmar = dialogView.findViewById(R.id.btOk);
         this.btConfirmar.setEnabled(false);
@@ -106,7 +107,7 @@ public class QuestionDialogFragment extends DialogFragment
             @Override
             public void onClick(View view) {
                 String respuesta = ((RadioButton)dialogView.findViewById(rgRes.getCheckedRadioButtonId())).getText().toString();
-                interfaceDialogs.setRespuesta(respuesta);
+                interfaceDialog.setRespuesta(respuesta);
                 QuestionDialogFragment.this.dismiss();
             }
         });
@@ -115,18 +116,22 @@ public class QuestionDialogFragment extends DialogFragment
         String tema = getDefaultSharedPreferences(getActivity()).getString("theme_setting","100");
         switch(tema){
             case "@string/TEMA_DESIERTO":
-                lyQuestionDialog.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_out));
-                lyQuestion.setBackground(getResources().getDrawable(R.drawable.desert_bg));
-                lyPuntos.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_out));
-                rgPuntos.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_in));
-                btConfirmar.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_out));
-                break;
             default:
-                lyQuestionDialog.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_out));
-                lyQuestion.setBackground(getResources().getDrawable(R.drawable.desert_bg));
-                lyPuntos.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_out));
-                rgPuntos.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_in));
-                btConfirmar.setBackground(getResources().getDrawable(R.drawable.desert_dialog_border_out));
+                lyQuestionDialog.setBackground(ResourcesCompat.getDrawable(
+                        this.getResources(),R.drawable.desert_dialog_border_out,
+                        this.getActivity().getTheme()));
+                lyQuestion.setBackground(ResourcesCompat.getDrawable(
+                        this.getResources(),R.drawable.desert_bg,
+                        this.getActivity().getTheme()));
+                lyPuntos.setBackground(ResourcesCompat.getDrawable(
+                        this.getResources(),R.drawable.desert_dialog_border_out,
+                        this.getActivity().getTheme()));
+                rgPuntos.setBackground(ResourcesCompat.getDrawable(
+                        this.getResources(),R.drawable.desert_dialog_border_in,
+                        this.getActivity().getTheme()));
+                btConfirmar.setBackground(ResourcesCompat.getDrawable(
+                        this.getResources(),R.drawable.desert_dialog_border_out,
+                        this.getActivity().getTheme()));
                 break;
         }
 

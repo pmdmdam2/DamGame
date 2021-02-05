@@ -13,11 +13,10 @@ import com.example.damgame.model.Question;
  * @version  1.0
  */
 public class QuestionView {
-    private int anchoSprite;
-    private int altoSprite;
-    //coordenadas donde se dibuja el control
-    public float coordenadaX, coordenadaY;
-    private int estado;
+    private int spriteWidth;
+    private int spriteHeight;
+    public float xCoor, yCoor;
+    private int spriteIndex;
     private Play play;
     private Scene scene;
     private Bitmap questionBitmap;
@@ -30,63 +29,80 @@ public class QuestionView {
         this.play = play;
         this.scene = play.getScene();
         this.question = question;
-        anchoSprite = this.scene.getQuestionViewWidth()/this.scene.getQuestionViewImgNumber();
-        altoSprite =this.scene.getQuestionViewHeight();
-        estado=-1; //recien creado
+        spriteWidth = this.scene.getQuestionViewWidth()/this.scene.getQuestionViewImgNumber();
+        spriteHeight =this.scene.getQuestionViewHeight();
+        spriteIndex =-1; //recien creado
         this.questionBitmap = play.getScene().getQuestionViewBitmap(question.getComplejidad());
         //asociación del sonido de la captura de la pregunta
 
+        //-----------------------------------------------------------------------------------------
         //Actividad 4.8 PMDM
-        //probabilidad pregunta sencilla 80%, de pregunta difícil 20%
+        //-----------------------------------------------------------------------------------------
+
+        //la probabilidad de generar una pregunta sencilla es 80%,
+        //y de una pregunta difícil el 20%
 
         //cálculo de dirección aleatoria de cada pregunta generada
 
+        //posicionamiento del objeto gráfico de la pregunta. Por ejemplo, probabilidad <= 33%, la
+        //pregunta sale por arriba. Entre 33 y 66% aparece por la parte central. Si es > 66% el
+        //objeto gráfico de la pregunta aparece por la parte de abajo.
+        //-----------------------------------------------------------------------------------------
 
 
     }
     public QuestionView(Play play, Question question, float x, float y){
         this(play, question);
-        this.coordenadaX =x;
-        this.coordenadaY =y;
+        this.xCoor =x;
+        this.yCoor =y;
     }
-    public void updateState(){
-        //incrementamos el estado al siguiente momento de la explosión
-        estado++;
-    }
+
     public void updatePosition(){
-        this.coordenadaX += this.horizontalDirection * this.speed;
-        this.coordenadaY += this.verticalDirection * this.speed;
+        //-----------------------------------------------------------------------------------------
+        //Actividad 4.8 PMDM
+        //-----------------------------------------------------------------------------------------
+        //se calcula la nueva posición de la pregunta. Revisar el siguiente código
+        this.xCoor += this.horizontalDirection * this.speed;
+        this.yCoor += this.verticalDirection * this.speed;
         //Cambios de direcciones al llegar a los bordes de la pantalla
-        if(coordenadaX <=0 && this.horizontalDirection ==-1)
+        if(xCoor <=0 && this.horizontalDirection ==-1)
             this.horizontalDirection =1;
-        if(coordenadaX >this.scene.getScreenWidth()-
+        if(xCoor >this.scene.getScreenWidth()-
                 this.questionBitmap.getWidth() &&
                 this.horizontalDirection ==1)
             this.horizontalDirection =-1;
 
-        if(coordenadaY >=this.scene.getScreenHeight() && this.verticalDirection ==1)
+        if(yCoor >=this.scene.getScreenHeight() && this.verticalDirection ==1)
             this.verticalDirection =-1;
-        if(coordenadaY <=0 && this.verticalDirection ==-1)
+        if(yCoor <=0 && this.verticalDirection ==-1)
             this.verticalDirection =1;
+        //-----------------------------------------------------------------------------------------
     }
     public void draw(Canvas canvas, Paint paint){
-        int posicionSprite=estado* anchoSprite;
+        int spritePosition=0;
+        //-----------------------------------------------------------------------------------------
+        //Actividad 4.8 PMDM
+        //-----------------------------------------------------------------------------------------
+        //calcular el nuevo índice del sprite para la animación de la pregunta
+
+        //calcular la posición del sprite en la pantalla
 
         if(!isFinished()) {
             //Calculamos el cuadrado del sprite que vamos a dibujar
-            Rect origen = new Rect(posicionSprite, 0, posicionSprite + anchoSprite,
-                    altoSprite);
+            Rect origen = new Rect(spritePosition, 0, spritePosition + spriteWidth,
+                    spriteHeight);
 
             //calculamos donde vamos a dibujar la porcion del sprite
-            Rect destino = new Rect((int) coordenadaX,(int) coordenadaY,(int) coordenadaX + anchoSprite,
-                    (int) coordenadaY + this.altoSprite);
+            Rect destino = new Rect((int) xCoor,(int) yCoor,(int) xCoor + spriteWidth,
+                    (int) yCoor + this.spriteHeight);
 
-            canvas.drawBitmap(play.getScene().getQuestionViewBitmap(this.question.getComplejidad()), origen, destino, paint);
+            canvas.drawBitmap(play.getScene().getQuestionViewBitmap(this.question.getComplejidad()),
+                    origen, destino, paint);
         }
-
+        //-----------------------------------------------------------------------------------------
     }
     public boolean isFinished(){
-        return estado>=this.scene.getQuestionViewImgNumber();
+        return spriteIndex >=this.scene.getQuestionViewImgNumber();
     }
 
     public Question getQuestion() {

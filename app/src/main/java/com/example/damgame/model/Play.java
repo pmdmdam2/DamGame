@@ -3,6 +3,7 @@ package com.example.damgame.model;
 import com.example.damgame.activities.GameActivity;
 import com.example.damgame.utils.GameUtil;
 import com.example.damgame.views.DesertScene;
+import com.example.damgame.views.PreguntaView;
 import com.example.damgame.views.QuestionView;
 import com.example.damgame.views.Scene;
 
@@ -24,8 +25,9 @@ public class Play {
     private int questionsCreated = 0;
     private int points;
     private int lifes;
-    private ArrayList<Question> questions = new ArrayList<Question>();
-    private ArrayList<QuestionView> questionViews = new ArrayList<QuestionView>();
+    private int level;
+    private ArrayList<Question> questions = new ArrayList<>();
+    private ArrayList<QuestionView> questionViews = new ArrayList<>();
 
     private Play() {
     }
@@ -34,23 +36,24 @@ public class Play {
             , GameConfig gameConfig) {
         Play play = new Play();
         play.setConfig(gameConfig);
+        play.setLifes(3);
+        play.questions = new ArrayList<>();
         switch (sceneCode) {
             case GameUtil.TEMA_DESIERTO:
-                play.setLifes(3);
                 play.scene = new DesertScene(gameActivity);
-                play.questions = new ArrayList<Question>();
                 break;
             case GameUtil.TEMA_ESPACIO:
                 break;
-
             case GameUtil.TEMA_CIUDAD:
                 break;
-
             case GameUtil.TEMA_HIELO:
                 break;
             case GameUtil.TEMA_SELVA:
                 break;
             case GameUtil.TEMA_SUBMARINO:
+                break;
+            default:
+                play.scene = new DesertScene(gameActivity);
                 break;
         }
         return play;
@@ -125,9 +128,15 @@ public class Play {
     }
 
     public boolean isFinished() {
-        if (this.lifes == 0 || (this.scene.getNextImgIndex() < this.scene.getCurrentImgIndex()
-                && this.scene.getNextImgIndex() == 0))
-            return true;
-        return false;
+        return this.lifes == 0 || (this.scene.getNextImgIndex() < this.scene.getCurrentImgIndex()
+                && this.scene.getNextImgIndex() == 0);
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }

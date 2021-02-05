@@ -5,6 +5,6 @@ package com.example.damgame.interfaces;
  * @author 2º DAM - IES Antonio Gala
  * @version 1.0
  */
-public interface InterfaceDialogs {
+public interface InterfaceDialog {
     void setRespuesta(String respuesta);
 }

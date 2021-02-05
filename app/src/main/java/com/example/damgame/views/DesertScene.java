@@ -3,6 +3,9 @@ package com.example.damgame.views;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
+
+import androidx.core.content.res.ResourcesCompat;
+
 import com.example.damgame.R;
 import com.example.damgame.activities.GameActivity;
 import com.example.damgame.utils.GameUtil;
@@ -28,11 +31,13 @@ public class DesertScene extends Scene {
     }
     @Override
     public int getQuestionViewWidth() {
-        return 100;
+        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
+                R.drawable.desert_quest_d, this.gameActivity.getTheme()).getMinimumWidth();
     }
     @Override
     public int getQuestionViewHeight() {
-        return 100;
+        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
+                R.drawable.desert_quest_d, this.gameActivity.getTheme()).getMinimumHeight();
     }
 
     @Override
@@ -50,12 +55,14 @@ public class DesertScene extends Scene {
 
     @Override
     public int getBouncyViewWidth() {
-        return this.gameActivity.getResources().getDrawable(R.drawable.desert_hatbird).getMinimumWidth();
+        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
+                R.drawable.desert_hatbird, this.gameActivity.getTheme()).getMinimumWidth();
     }
 
     @Override
     public int getBouncyViewHeight() {
-        return this.gameActivity.getResources().getDrawable(R.drawable.desert_hatbird).getMinimumHeight();
+        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
+                R.drawable.desert_hatbird, this.gameActivity.getTheme()).getMinimumHeight();
     }
 
     @Override
@@ -120,12 +127,14 @@ public class DesertScene extends Scene {
 
     @Override
     public int getExplosionViewWidth() {
-        return this.gameActivity.getResources().getDrawable(R.drawable.explosion_out).getMinimumWidth();
+        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
+                R.drawable.explosion_out, this.gameActivity.getTheme()).getMinimumWidth();
     }
 
     @Override
     public int getExplosionViewHeight() {
-        return this.gameActivity.getResources().getDrawable(R.drawable.explosion_out).getIntrinsicHeight();
+        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
+                R.drawable.explosion_out, this.gameActivity.getTheme()).getIntrinsicHeight();
     }
 
     @Override

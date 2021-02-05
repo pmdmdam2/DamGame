@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.example.damgame.R;
 import com.example.damgame.controllers.AudioController;
 import com.example.damgame.fragments.QuestionDialogFragment;
-import com.example.damgame.interfaces.InterfaceDialogs;
+import com.example.damgame.interfaces.InterfaceDialog;
 import com.example.damgame.model.GameConfig;
 import com.example.damgame.model.Play;
 import com.example.damgame.model.Question;
@@ -34,7 +34,7 @@ import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
  * @author 2º DAM - IES Antonio Gala
  * @version 1.0
  */
-public class GameActivity extends AppCompatActivity implements InterfaceDialogs {
+public class GameActivity extends AppCompatActivity implements InterfaceDialog {
     private final int SETTINGS_ACTION =1;
     private Play gameMove;
     private int sceneCode;
@@ -59,8 +59,8 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialogs 
     }
 
     private void startGame(){
-        this.sceneCode = Integer.valueOf(getDefaultSharedPreferences(this).
-                getString("ambient_setting","100"));
+        this.sceneCode = Integer.parseInt(getDefaultSharedPreferences(this).
+                getString("ambient_setting",String.valueOf(GameUtil.TEMA_DESIERTO)));
         this.gameMove = Play.createGameMove(this,this.sceneCode, this.config);
         this.scene = this.gameMove.getScene();
         this.gameView = new GameView(this);
@@ -106,8 +106,8 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialogs 
      * Establece el tema seleccionado en las preferencias
      */
     private void setTema(){
-        this.sceneCode = Integer.valueOf(getDefaultSharedPreferences(this).
-                getString("theme_setting","100"));
+        this.sceneCode = Integer.parseInt(getDefaultSharedPreferences(this).
+                getString("theme_setting",String.valueOf(GameUtil.TEMA_DESIERTO)));
         switch(this.sceneCode){
             case GameUtil.TEMA_DESIERTO:
                 setTheme(R.style.Desert_DamGame);
@@ -120,24 +120,22 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialogs 
 
     }
     private void hideSystemUI() {
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            //A partir de kitkat
-            this.gameView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-            //cuando se presiona volumen, por ejemplo, se cambia la visibilidad, hay que volver
-            //a ocultar
-            this.gameView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-                @Override
-                public void onSystemUiVisibilityChange(int visibility) {
-                    hideSystemUI();
-                }
-            });
-        }
+        //A partir de kitkat
+        this.gameView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        //cuando se presiona volumen, por ejemplo, se cambia la visibilidad, hay que volver
+        //a ocultar
+        this.gameView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                hideSystemUI();
+            }
+        });
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB &&
                 Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             // Pre-Jelly Bean, we must manually hide the action bar
