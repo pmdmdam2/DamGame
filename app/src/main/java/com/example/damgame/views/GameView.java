@@ -120,7 +120,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             }
 
             //--------------------------------------------------------------------------------------
-            //Actividad 4.8 PMDM
+            //Actividad 4.9 PMDM
             //--------------------------------------------------------------------------------------
             //dibuja las preguntas
             for(QuestionView questionView: this.play.getQuestionViews())
@@ -145,7 +145,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         this.updateSceneBackground();
 
         //-----------------------------------------------------------------------------------------
-        //Actividad 4.8 PMDM
+        //Actividad 4.9 PMDM
         //-----------------------------------------------------------------------------------------
         //se calculan los frames para crear una nueva pregunta
         if(this.gameConfig.getFramesToNewQuestion()==0){
@@ -156,7 +156,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         this.gameConfig.setFramesToNewQuestion(this.gameConfig.getFramesToNewQuestion()-1);
 
         //-----------------------------------------------------------------------------------------
-        //Actividad 4.8 PMDM
+        //Actividad 4.9 PMDM
         //-----------------------------------------------------------------------------------------
         //las preguntas aparecen y se mueven
         for(QuestionView goQuestion: this.play.getQuestionViews())
@@ -193,7 +193,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
         }
     }
     //-----------------------------------------------------------------------------------------
-    //Actividad 4.8 PMDM
+    //Actividad 4.9 PMDM
     //-----------------------------------------------------------------------------------------
     //se cargan las preguntas
     public void questionLoad(){
@@ -207,7 +207,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback{
             this.goEasyQuestion = goQuestion;
     }
     //-----------------------------------------------------------------------------------------
-    //Actividad 4.8 PMDM
+    //Actividad 4.9 PMDM
     //-----------------------------------------------------------------------------------------
     //se añade una nueva pregunta al array de preguntas
     public void createNewQuestion(){

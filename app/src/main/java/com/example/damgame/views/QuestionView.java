@@ -36,7 +36,7 @@ public class QuestionView {
         //asociación del sonido de la captura de la pregunta
 
         //-----------------------------------------------------------------------------------------
-        //Actividad 4.8 PMDM
+        //Actividad 4.9 PMDM
         //-----------------------------------------------------------------------------------------
 
         //la probabilidad de generar una pregunta sencilla es 80%,
@@ -59,7 +59,7 @@ public class QuestionView {
 
     public void updatePosition(){
         //-----------------------------------------------------------------------------------------
-        //Actividad 4.8 PMDM
+        //Actividad 4.9 PMDM
         //-----------------------------------------------------------------------------------------
         //se calcula la nueva posición de la pregunta. Revisar el siguiente código
         this.xCoor += this.horizontalDirection * this.speed;
@@ -81,7 +81,7 @@ public class QuestionView {
     public void draw(Canvas canvas, Paint paint){
         int spritePosition=0;
         //-----------------------------------------------------------------------------------------
-        //Actividad 4.8 PMDM
+        //Actividad 4.9 PMDM
         //-----------------------------------------------------------------------------------------
         //calcular el nuevo índice del sprite para la animación de la pregunta
 
