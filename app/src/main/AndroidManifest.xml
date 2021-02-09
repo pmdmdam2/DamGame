@@ -9,8 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DamGame">
-        <activity android:name=".activities.SettingsActivity"></activity>
-        <activity android:name=".activities.GameActivity"
+        <activity android:name="dam.gala.damgame.activities.SettingsActivity"/>
+        <activity android:name="dam.gala.damgame.activities.GameActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
