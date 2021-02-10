@@ -18,8 +18,7 @@ public class BouncyView {
     private int spriteWidth;
     private int spriteHeight;
     public int xCoord, yCoord, yCurrentCoord;
-    private int offset;
-    private int velocidadVertical;
+    private int spriteIndex;
     private Bitmap bouncyBitmap;
     private int gravity;
     private boolean finished;
@@ -39,12 +38,9 @@ public class BouncyView {
         this.yCurrentCoord = yCoord;
         this.spriteWidth = scene.getBouncyViewWidth() / scene.getBouncyViewImgNumber();
         this.spriteHeight = scene.getBouncyViewHeight();
-        this.velocidadVertical = scene.getScreenWidth() * 10 / 1080;
         this.bouncyBitmap = scene.getBouncyViewBitmap();
-        this.gravity = this.gameConfig.getGravity();
-
-        offset = -1; //recien creado
-        //creación y control del sonido asociado al movimiento del objeto principal
+        this.gravity = scene.getScreenWidth() * this.gameConfig.getGravity()/1920;
+        spriteIndex = -1; //recien creado
     }
 
     public void updateState() {
@@ -54,12 +50,12 @@ public class BouncyView {
         }
         if (gravity > (this.yCoord)) {
             this.gravity = 0;
-            this.offset = -1;
+            this.spriteIndex = -1;
             this.finished = true;
             this.landed = true;
         } else {
-            if (this.offset == 3)
-                this.offset = -1;
+            if (this.spriteIndex == 3)
+                this.spriteIndex = -1;
         }
 
         for(CrashView crashView:this.gameView.getPlay().getCrashViews()){
@@ -89,10 +85,10 @@ public class BouncyView {
         if (isFinished())
             return;
 
-        this.offset++;
+        this.spriteIndex++;
         //se calcula el area del bitmap que se va a dibujar
-        Rect startRect = new Rect(this.offset * this.spriteWidth, 0,
-                (this.offset + 1) * this.spriteWidth
+        Rect startRect = new Rect(this.spriteIndex * this.spriteWidth, 0,
+                (this.spriteIndex + 1) * this.spriteWidth
                 , this.spriteHeight);
         Rect endRect = new Rect(this.xCoord, this.yCoord + this.gravity, this.xCoord +
                 this.spriteWidth
@@ -125,12 +121,8 @@ public class BouncyView {
         return this.yCurrentCoord;
     }
 
-    public int getOffset() {
-        return offset;
-    }
-
-    public float getVelocidadVertical() {
-        return velocidadVertical;
+    public int getSpriteIndex() {
+        return spriteIndex;
     }
 
     public Bitmap getBouncyBitmap() {

@@ -13,9 +13,8 @@ import dam.gala.damgame.scenes.Scene;
 public class QuestionExplosionView {
     private int spriteWidth;
     private int spriteHeight;
-    public int xCoord, yCoord;
+    public int xCoor, yCoor;
     private GameView gameView;
-    private int landscapeSpeed;
     private Bitmap questionExplosionBitmap;
     private boolean finished;
     private Scene scene;
@@ -49,17 +48,17 @@ public class QuestionExplosionView {
      */
     public void draw(Canvas canvas, Paint paint){
         if(!isFinished()) {
-            this.yCoord = this.gameView.getBouncyView().getyCurrentCoord();
-            this.xCoord = this.gameView.getBouncyView().getxCoord();
+            this.yCoor = this.gameView.getBouncyView().getyCurrentCoord();
+            this.xCoor = this.gameView.getBouncyView().getxCoord();
             //Calculamos el cuadrado del sprite que vamos a dibujar
             Rect startRect = new Rect(this.spriteIndex* this.spriteWidth,
                     0, (this.spriteIndex * this.spriteWidth) + this.spriteWidth,
                     this.spriteHeight);
 
             //calculamos donde vamos a dibujar la porcion del sprite
-            Rect endRect = new Rect((int) this.xCoord,(int) this.yCoord,
-                    (int) this.xCoord + this.spriteWidth,
-                    (int) this.yCoord +this.spriteHeight);
+            Rect endRect = new Rect((int) this.xCoor,(int) this.yCoor,
+                    (int) this.xCoor + this.spriteWidth,
+                    (int) this.yCoor +this.spriteHeight);
 
             canvas.drawBitmap(this.questionExplosionBitmap,startRect,endRect,paint);
         }else{

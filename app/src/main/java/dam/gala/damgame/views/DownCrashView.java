@@ -14,12 +14,12 @@ public class DownCrashView extends CrashView{
 
     /**
      * Construye el bloque de choque de la parte inferior
-     * @param play Jugada en la que se construye el bloque
+     * @param gameView Jugada en la que se construye el bloque
      * @param topCrashView Bloque de choque de la parte superior
      */
-    public DownCrashView(@NonNull Play play,
+    public DownCrashView(@NonNull GameView gameView,
                          @NonNull TopCrashView topCrashView) {
-        super(play);
+        super(gameView);
         this.topCrashView = topCrashView;
         this.setyCoor(this.topCrashView.getHeight()+
                 this.getScene().getBouncyViewHeight()+

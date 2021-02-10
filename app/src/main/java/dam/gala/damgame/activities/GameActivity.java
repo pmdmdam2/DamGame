@@ -28,6 +28,9 @@ import dam.gala.damgame.scenes.Scene;
 import dam.gala.damgame.utils.GameUtil;
 import dam.gala.damgame.views.GameView;
 
+import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
+import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+import static android.view.View.SYSTEM_UI_FLAG_IMMERSIVE;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
@@ -130,6 +133,7 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
         }
 
     }
+
     /**
      * Elimina la barra de acción y deja el mayor área posible de pantalla libre
      */
@@ -139,8 +143,8 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         //cuando se presiona volumen, por ejemplo, se cambia la visibilidad, hay que volver
         //a ocultar
@@ -150,10 +154,7 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
                 hideSystemUI();
             }
         });
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB &&
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            getActionBar().hide();
-        }
+
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);

@@ -64,6 +64,8 @@ public class Play {
                 break;
             case GameUtil.TEMA_SUBMARINO:
                 break;
+            case GameUtil.TEMA_VOLCANES:
+                break;
             default:
                 play.scene = new DesertScene(gameActivity);
                 break;

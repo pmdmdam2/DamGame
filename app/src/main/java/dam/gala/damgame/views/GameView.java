@@ -49,8 +49,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     //Imagen de escena
     private Scene scene;
     //imágenes para preguntas
-    private QuestionView goEasyQuestion;
-    private QuestionView goDificultQuestion;
     private Bitmap[] imagenes;
     //Controlador de toque en la pantalla
     private TouchController touchController;
@@ -258,9 +256,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void createNewCrashBlock() {
         if (this.gameActivity.getGameConfig().getCrashBlocks() -
                 this.play.getCrashBlockCreated() > 0) {
-            TopCrashView topCrashView = new TopCrashView(this.play);
+            TopCrashView topCrashView = new TopCrashView(this);
             this.play.getCrashViews().add(topCrashView);
-            this.play.getCrashViews().add(new DownCrashView(this.play, topCrashView));
+            this.play.getCrashViews().add(new DownCrashView(this, topCrashView));
             this.play.setCrashBlockCreated(this.play.getCrashBlockCreated() + 1);
         }
     }
@@ -275,10 +273,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 this.play.getQuestionsCreated() > 0) {
             Question question = new Question();
             QuestionView goQuestion = new QuestionView(this.play, question);
-            if (goQuestion.getQuestion().getComplejidad() == GameUtil.PREGUNTA_COMPLEJIDAD_ALTA)
-                this.goDificultQuestion = goQuestion;
-            else
-                this.goEasyQuestion = goQuestion;
             this.play.getQuestionViews().add(goQuestion);
             this.play.setQuestionsCreated(this.play.getQuestionsCreated() + 1);
         }

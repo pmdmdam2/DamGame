@@ -19,13 +19,14 @@ public class CrashView {
     private Scene scene;
     private Play play;
     private int crashBlockGap;
+    private int horizontalSpeed;
 
     /**
      * Construye bloques de choque en la jugada indicada
-     * @param play Jugada en la que se construye el bloque de choque
+     * @param gameView Jugada en la que se construye el bloque de choque
      */
-    public CrashView(Play play){
-        this.play = play;
+    public CrashView(GameView gameView){
+        this.play = gameView.getPlay();
         this.scene = play.getScene();
         this.height = this.scene.getCrashViewHeight();
         this.width = this.scene.getCrashViewWidth();
@@ -34,7 +35,8 @@ public class CrashView {
                 this.getScene().getCrashViewBitmapTop():
                 this.getScene().getCrashViewBitmapDown();
         this.xCoor = this.scene.getScreenWidth();
-        this.crashBlockGap = (int)(this.scene.getScreenHeight() * 0.1);
+        this.crashBlockGap = (int)(this.scene.getScreenHeight() * 0.15);
+        this.horizontalSpeed = this.scene.getScreenWidth() *10/1920;
     }
 
     public void draw(Canvas canvas, Paint paint){
@@ -49,7 +51,7 @@ public class CrashView {
         if(this.getxCoor()<=-this.getWidth())
             this.setxCoor(this.getScene().getScreenWidth());
         else
-            this.setxCoor(this.getxCoor() - 10);
+            this.setxCoor(this.getxCoor() - this.horizontalSpeed);
     }
     //-----------------------------------------------------------------------------------------
     //Métodos getter y setter para propiedades de los bloques de choque

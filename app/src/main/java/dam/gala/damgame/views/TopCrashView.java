@@ -11,10 +11,10 @@ import java.util.Random;
 public class TopCrashView extends CrashView{
     /**
      * Construye el bloque de choque de la parte superior
-     * @param play Jugada en la que se construye el bloque de choque
+     * @param gameView Jugada en la que se construye el bloque de choque
      */
-    public TopCrashView(@NonNull Play play) {
-        super(play);
+    public TopCrashView(@NonNull GameView gameView) {
+        super(gameView);
         Random random = new Random();
         int max;
         //la altura del bloque se generará aleatoriamente. Los valores oscilarán entre

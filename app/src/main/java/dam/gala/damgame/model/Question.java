@@ -12,7 +12,7 @@ public class Question {
     private CharSequence[]respuestas;
     private int[] respuestasCorrectas;
     private int puntos;
-    //TODO este constructor es provisional habrá que quitarlo cuando se tenga la información
+    //TODO este constructor es provisional, habrá que quitarlo cuando se tengan las preguntas
     //de las preguntas
     public Question(){
 

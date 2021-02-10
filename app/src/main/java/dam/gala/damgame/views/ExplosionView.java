@@ -16,14 +16,11 @@ public class ExplosionView {
     private int spriteWidth;
     private int spriteHeight;
     public int xCoord, yCoord;
-    private int offset;
+    private int spriteIndex;
     private GameView gameView;
-    private int landscapeSpeed;
     private Bitmap explosionBitmap;
     private boolean finished;
-    private int estado;
     private int bouncyViewHeigth;
-    //reproduce explosión
 
     /**
      * Construye la animación para una explosión
@@ -32,14 +29,11 @@ public class ExplosionView {
     public ExplosionView(GameView gameView){
         this.gameView = gameView;
         Scene scene = this.gameView.getScene();
-        //this.yCoord = bouncyView.yCoord;//this.scene.getScreenHeight() /2-this.scene.getExplosionViewHeight()/2;
-       // this.xCoord = bouncyView.xCoord;//this.scene.getExplosionViewWidth() /5;
         this.spriteWidth = scene.getExplosionViewWidth()/scene.getExplosionViewImgNumber();
         this.spriteHeight = scene.getExplosionViewHeight();
-        this.landscapeSpeed=  scene.getScreenWidth()  *10/1080;
         this.explosionBitmap = scene.getExplosionViewBitmap();
         this.bouncyViewHeigth = scene.getBouncyViewHeight();
-        offset = -1; //recien creado
+        spriteIndex = -1; //recien creado
     }
 
     /**
@@ -48,7 +42,7 @@ public class ExplosionView {
     public void updateState(){
         if(isFinished()) return;
         //incrementamos el estado al siguiente momento de la explosión
-        this.offset++;
+        this.spriteIndex++;
     }
 
     /**
@@ -61,8 +55,8 @@ public class ExplosionView {
             this.yCoord = this.gameView.getBouncyView().getyCurrentCoord();
             this.xCoord = this.gameView.getBouncyView().getxCoord();
             //Calculamos el cuadrado del sprite que vamos a dibujar
-            Rect startRect = new Rect(this.offset* this.spriteWidth,
-                    0, (this.offset * this.spriteWidth) + this.spriteWidth,
+            Rect startRect = new Rect(this.spriteIndex * this.spriteWidth,
+                    0, (this.spriteIndex * this.spriteWidth) + this.spriteWidth,
                     this.spriteHeight);
 
             //calculamos donde vamos a dibujar la porcion del sprite
@@ -82,7 +76,7 @@ public class ExplosionView {
      * imágenes del sprite de explosión
      */
     public boolean isFinished(){
-        return this.estado>=this.gameView.getScene().getExplosionViewImgNumber();
+        return this.spriteIndex>=this.gameView.getScene().getExplosionViewImgNumber();
     }
 
     public Bitmap getExplosionBitmap(){

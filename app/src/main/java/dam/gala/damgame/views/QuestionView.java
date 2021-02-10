@@ -49,14 +49,16 @@ public class QuestionView {
         spriteHeight =this.scene.getQuestionViewHeight();
         spriteIndex =-1;
         this.questionBitmap = play.getScene().getQuestionViewBitmap(question.getComplejidad());
-
+        //el siguiente código hay que modificarlo cuando tengamos las preguntas
         random = new Random();
         if(random.nextFloat()>0.20){
-            this.question.setTipo(GameUtil.PREGUNTA_COMPLEJIDAD_ALTA);
-            this.speed =  GameUtil.HIGH_COMPLEX_SPEED * this.scene.getScreenWidth() /1000;
+            this.question.setComplejidad(GameUtil.PREGUNTA_COMPLEJIDAD_ALTA);
+            this.speed =  GameUtil.HIGH_COMPLEX_SPEED * this.scene.getScreenWidth() /1920;
+            this.questionBitmap = this.scene.getQuestionViewBitmap(GameUtil.PREGUNTA_COMPLEJIDAD_ALTA);
         }else{
-            this.question.setTipo(GameUtil.PREGUNTA_COMPLEJIDAD_BAJA);
-            this.speed = GameUtil.LOW_COMPLEX_SPEED * this.scene.getScreenWidth() /1000;
+            this.question.setComplejidad(GameUtil.PREGUNTA_COMPLEJIDAD_BAJA);
+            this.speed = GameUtil.LOW_COMPLEX_SPEED * this.scene.getScreenWidth() /1920;
+            this.questionBitmap = this.scene.getQuestionViewBitmap(GameUtil.PREGUNTA_COMPLEJIDAD_BAJA);
         }
         //cálculo de dirección aleatoria de cada pregunta generada
         if(random.nextFloat()>0.5)
@@ -135,7 +137,7 @@ public class QuestionView {
                     (int) this.xCoor + this.spriteWidth,
                     (int) this.yCoor + this.spriteHeight);
 
-            canvas.drawBitmap(play.getScene().getQuestionViewBitmap(this.question.getComplejidad()), origen, destino, paint);
+            canvas.drawBitmap(this.questionBitmap, origen, destino, paint);
         }
     }
 
