@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class TouchController implements View.OnTouchListener{
     private GameActivity gameActivity;
     private boolean touched=false;
-    private ArrayList<Touch> touches = new ArrayList<>();
+    private ArrayList<Touch> touches = new ArrayList<Touch>();
     /**
      * Controlador del gesto de toque en la pantalla
      * @param gameActivity Actividad principal a la que se asocia el controlador

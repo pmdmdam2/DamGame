@@ -49,25 +49,45 @@ public class QuestionView {
         spriteHeight =this.scene.getQuestionViewHeight();
         spriteIndex =-1;
         this.questionBitmap = play.getScene().getQuestionViewBitmap(question.getComplejidad());
-        //-----------------------------------------------------------------------------------------
-        //TODO Actividad 4.9 PMDM
-        //-----------------------------------------------------------------------------------------
-        //La probabilidad de generar una pregunta sencilla es 80%,
-        //y de una pregunta difícil el 20%
 
-        //cálculo de dirección aleatoria de cada pregunta generada, en sentido horizontal y
-        //vertical
+        random = new Random();
+        if(random.nextFloat()>0.20){
+            this.question.setTipo(GameUtil.PREGUNTA_COMPLEJIDAD_ALTA);
+            this.speed =  GameUtil.HIGH_COMPLEX_SPEED * this.scene.getScreenWidth() /1000;
+        }else{
+            this.question.setTipo(GameUtil.PREGUNTA_COMPLEJIDAD_BAJA);
+            this.speed = GameUtil.LOW_COMPLEX_SPEED * this.scene.getScreenWidth() /1000;
+        }
+        //cálculo de dirección aleatoria de cada pregunta generada
+        if(random.nextFloat()>0.5)
+            this.horizontalDirection = 1;
+        else
+            this.horizontalDirection = -1;
+
+        if(random.nextFloat()>0.5)
+            this.verticalDirection = 1;
+        else
+            this.verticalDirection = -1;
 
         /* Posicionamiento de la pregunta */
         //entre 0,66y 0.999 sale por arriba (y=0, x=aleatorio(1/5) alto pantalla)
         //entre 0.33 y 0.66 sale por abajo (y=AltoPantalla-altobitmap, x=aleatorio(1/5))
         //< 0,33 sale por el centro (x=0, y=aleatorio entre 0
         // y AltoPantalla-AltoBitmap)
-
-        //-----------------------------------------------------------------------------------------
-
-        //El código que hay a continuación puede servir para hacer que la pregunta choque
-        //con el bouncy
+        randomCoor = random.nextFloat();
+        if (randomCoor>=0.33) {
+            //probabilidad de que la pregunta salga por los arriba o abajo
+            if (randomCoor > 0.66) //sale por la arriba
+                this.yCoor =0;
+            else
+                this.yCoor = this.scene.getScreenHeight() -
+                        this.spriteHeight;
+        } else {
+            this.yCoor = (int) (random.nextFloat() * (this.scene.getScreenHeight()
+                                - this.spriteHeight));
+        }
+        this.xCoor = (int) (this.scene.getScreenWidth()+ (random.nextFloat() * 10));
+        //prueba para hacer que la pregunta choque con el bouncy
         /*this.yCoor = scene.getScreenHeight() / 2 - scene.getBouncyViewHeight() / 2;
         this.xCoor = scene.getScreenWidth() / 4;
         this.horizontalDirection=-1;*/
@@ -121,7 +141,7 @@ public class QuestionView {
 
     /**
      * Comprueba si hay que seguir mostrando el objeto gráfico de la pregunta
-     * @return Devuelve verdadero si el juego ha terminado
+     * @return
      */
     public boolean isFinished(){
         return spriteIndex >=this.scene.getQuestionViewImgNumber() || this.questionCatched;

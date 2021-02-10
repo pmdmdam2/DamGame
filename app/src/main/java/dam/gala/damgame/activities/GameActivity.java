@@ -1,9 +1,5 @@
 package dam.gala.damgame.activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -16,16 +12,21 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.damgame.R;
+
 import dam.gala.damgame.controllers.AudioController;
 import dam.gala.damgame.fragments.QuestionDialogFragment;
 import dam.gala.damgame.interfaces.InterfaceDialog;
 import dam.gala.damgame.model.GameConfig;
 import dam.gala.damgame.model.Play;
 import dam.gala.damgame.model.Question;
+import dam.gala.damgame.scenes.Scene;
 import dam.gala.damgame.utils.GameUtil;
 import dam.gala.damgame.views.GameView;
-import dam.gala.damgame.scenes.Scene;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -204,7 +205,7 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
         super.onOptionsItemSelected(item);
         switch(item.getItemId()){
             case R.id.imSettings:
-                Intent preferences = new Intent(GameActivity.this,SettingsActivity.class);
+                Intent preferences = new Intent(GameActivity.this, SettingsActivity.class);
                 startActivityForResult(preferences, SETTINGS_ACTION);
                 break;
         }

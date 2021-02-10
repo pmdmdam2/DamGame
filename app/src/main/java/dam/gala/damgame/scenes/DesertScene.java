@@ -31,11 +31,13 @@ public class DesertScene extends Scene {
     }
     @Override
     public int getQuestionViewWidth() {
-        return this.getQuestionViewBitmap(GameUtil.HIGH_COMPLEX_SPEED).getWidth();
+        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
+                R.drawable.desert_quest_d, this.gameActivity.getTheme()).getMinimumWidth();
     }
     @Override
     public int getQuestionViewHeight() {
-        return this.getQuestionViewBitmap(GameUtil.HIGH_COMPLEX_SPEED).getHeight();
+        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
+                R.drawable.desert_quest_d, this.gameActivity.getTheme()).getMinimumHeight();
     }
 
     @Override
@@ -53,12 +55,14 @@ public class DesertScene extends Scene {
 
     @Override
     public int getBouncyViewWidth() {
-        return this.getBouncyViewBitmap().getWidth();
+        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
+                R.drawable.desert_hatbird, this.gameActivity.getTheme()).getMinimumWidth();
     }
 
     @Override
     public int getBouncyViewHeight() {
-        return this.getBouncyViewBitmap().getHeight();
+        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
+                R.drawable.desert_hatbird, this.gameActivity.getTheme()).getMinimumHeight();
     }
 
     @Override
@@ -123,12 +127,14 @@ public class DesertScene extends Scene {
 
     @Override
     public int getExplosionViewWidth() {
-        return this.getExplosionViewBitmap().getWidth();
+        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
+                R.drawable.explosion_out, this.gameActivity.getTheme()).getMinimumWidth();
     }
 
     @Override
     public int getExplosionViewHeight() {
-        return this.getExplosionViewBitmap().getHeight();
+        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
+                R.drawable.explosion_out, this.gameActivity.getTheme()).getMinimumHeight();
     }
 
     @Override

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:layout_margin="20dp"
     android:gravity="bottom|center"
-    tools:context=".activities.MainActivity">
+    tools:context="dam.gala.damgame.activities.GameActivity">
 
     <Button
         android:id="@+id/btIniciar"

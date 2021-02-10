@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
 import androidx.annotation.NonNull;
 
 import dam.gala.damgame.activities.GameActivity;
@@ -20,6 +19,7 @@ import dam.gala.damgame.model.Question;
 import dam.gala.damgame.model.Touch;
 import dam.gala.damgame.scenes.Scene;
 import dam.gala.damgame.threads.GameLoop;
+import dam.gala.damgame.utils.GameUtil;
 
 import java.util.Iterator;
 
@@ -63,6 +63,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public GameView(Context context) {
         super(context);
     }
+
     /**
      * Construye el objeto que actúa como coreógrafo de la escena del juego
      * @param gameActivity Actividad principal del juego
@@ -97,6 +98,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         //se controlan los toques en pantalla
         this.setOnTouchListener(this.touchController);
     }
+
     /**
      * Dibujar el estado actual de la escena
      * @param canvas Lienzo de dibujo
@@ -139,32 +141,31 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 }
             }
 
-            //---------------------------------------------------------------------------------------
-            //TODO ACTIVIDAD 4.12
-            //---------------------------------------------------------------------------------------
-            //TODO Captura de una pregunta
-            //Se comprueba si el OGP ha capturado la pregunta. Si es así mostramos la explosión
-            //con su animación y el audio correspondiente
+            //dibuja el OGP (posición inicial a 1/5 de ancho y la mitad de alto)
+                /*canvas.drawBitmap(this.bouncyView.getBouncyBitmap(), this.bouncyView.getCoordenadaX(),
+                        this.bouncyView.getCoordenadaY(), null);*/
 
-            //---------------------------------------------------------------------------------------
-            //TODO ACTIVIDAD 4.11
-            //---------------------------------------------------------------------------------------
-            //TODO Choque con alguna columna
-            //Podemos comprobar el choque del OGP con una columna o con el suelo. Si es así
-            //debemos mostrar la animación de la explosión y el sonido correspondiente. En caso
-            //contrario seguimos mostrando el OGP en su posición inicial
+            if (this.bouncyView.isQuestionCatched()) {
+                this.questionExplosionView.draw(canvas, myPaint);
+                if (!this.audioController.isMediaExplosionStarted()) {
+                    this.audioController.startAudioQuestionExplosion(this.getScene());
+                }
+            }
 
-            //--------------------------------------------------------------------------------------
-            //TODO Actividad 4.9 PMDM
-            //--------------------------------------------------------------------------------------
-            //TODO Dibuja las preguntas
-            //Debes recorrer todas las preguntas que se han creado y dibujarlas
+            if (this.bouncyView.isLanded() || this.bouncyView.isColluded()) {
+                this.explosionView.draw(canvas, myPaint);
+                if (!this.audioController.isMediaExplosionStarted()) {
+                    this.audioController.startAudioExplosion(this.getScene());
+                }
+            } else {
+                this.bouncyView.draw(canvas, myPaint);
+            }
 
-            //--------------------------------------------------------------------------------------
-            //TODO Actividad 4.10 PMDM
-            //--------------------------------------------------------------------------------------
-            //TODO Dibuja las bloques de choque
-            //Debes recorrer todos los bloques de choque crados dibujarlos
+            for (QuestionView questionView : this.play.getQuestionViews())
+                questionView.draw(canvas, myPaint);
+
+            for (CrashView crashView : this.play.getCrashViews())
+                crashView.draw(canvas, myPaint);
 
 
             //aquí se dibujarán la animación de captura de una pregunta
@@ -186,56 +187,57 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         this.updateSceneBackground();
 
-        //-----------------------------------------------------------------------------------------
-        //TODO Actividad 4.10 PMDM
-        //-----------------------------------------------------------------------------------------
-        //TODO Actualizar el estado de los bloques de choque
-        //Si no se han creado todos los bloques de choque se crea uno nuevo y se cuenta como
-        //bloque creado
+        if (this.gameConfig.getFramesToNewCrashBlock() == 0) {
+            if (this.play.getCrashViews().size() < this.gameConfig.getCrashBlocks())
+                this.createNewCrashBlock();
+            //nuevo ciclo de bloques
+            this.gameConfig.setFramesToNewCrashBlock(GameLoop.MAX_FPS * 60 /
+                    this.gameConfig.getTimeToCrashBlock());
+        }
+        this.gameConfig.setFramesToNewCrashBlock(this.gameConfig.getFramesToNewCrashBlock() - 1);
+        //los bloques aparecen y se mueven
+        Iterator iterator = this.play.getCrashViews().iterator();
+        CrashView crashView;
+        while (iterator.hasNext()) {
+            crashView = (CrashView) iterator.next();
+            crashView.updateState();
+            if (crashView.getxCoor() <= (-crashView.getWidth())) {
+                iterator.remove();
+                this.play.setCrashBlockCreated(this.play.getCrashBlockCreated() - 1);
+            }
+        }
 
-        //Ahora tenemos que comprobar si un bloque ha llegado al margen izquierdo de la pantalla
-        //en dicho caso se elimina el bloque para que en la siguiente actualización del juego
-        //se vuelva a crear un nuevo bloque por la derecha.
+        if (this.gameConfig.getFramesToNewQuestion() == 0) {
+            this.createNewQuestion();
+            //nuevo ciclo de preguntas
+            this.gameConfig.setFramesToNewQuestion(GameLoop.MAX_FPS * 60 / this.gameConfig.
+                    getTimeToQuestion());
+        }
+        this.gameConfig.setFramesToNewQuestion(this.gameConfig.getFramesToNewQuestion() - 1);
 
-        //-----------------------------------------------------------------------------------------
-        //TODO Actividad 4.9 PMDM
-        //-----------------------------------------------------------------------------------------
-        //TODO se calculan los frames para crear una nueva pregunta
-        //Si el número de frames para la nueva pregunta es 0, se crea la nueva pregunta, y se
-        //actualiza el número de marcos para crear la siguiente pregunta. Después se descuenta el
-        //frame actual
-
-        //-----------------------------------------------------------------------------------------
-        //TODO Actividad 4.9 PMDM
-        //-----------------------------------------------------------------------------------------
-        //TODO Se muestran los objetos gráficos de las preguntas
-        //Debes recorrer todas las preguntas creadas y actualizar el estado de las mismas
-
+        for (QuestionView goQuestion : this.play.getQuestionViews())
+            goQuestion.updatePosition();
         //-----------------------------------------------------------------------------------------
 
-        //actualizar OGP si no ha tocado suelo y no ha chocado con una columna
-        if (!this.bouncyView.isLanded() || !this.bouncyView.isColluded()) {
+        //caputura de las preguntas
+
+        //actualizar flappy
+        if (!this.bouncyView.isLanded()) {
             this.bouncyView.updateState();
         }
-        //-----------------------------------------------------------------------------------------
-        //TODO Actividad 4.11 PMDM
-        //-----------------------------------------------------------------------------------------
-        //TODO Actualizar el objeto visual de la explosión tras chocar con una columna
-        //o tras caer al suelo
 
+        if (this.bouncyView.isLanded() || this.bouncyView.isColluded()) {
+            //se carga el view de la explosión para aterrizaje del flappy o choque
+            this.explosionView.updateState();
+        }
 
-        //-----------------------------------------------------------------------------------------
-        //TODO Actividad 4.12 PMDM
-        //-----------------------------------------------------------------------------------------
-        //TODO Actualizar la destrucción de la pregunta una vez capturada
-        //mostrar el cuadro de diálogo de la pregunta y detener el juego
-
-
-
+        if (this.bouncyView.isQuestionCatched()) {
+            this.questionExplosionView.updateState();
+        }
 
         //aquí se comprobará la condición de final de juego
-    }
 
+    }
     /**
      * Carga la escena
      */
@@ -253,39 +255,34 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    //-----------------------------------------------------------------------------------------
-    //TODO Actividad 4.10 PMDM
-    //-----------------------------------------------------------------------------------------
-    //TODO crea un nuevo bloque de choque
     public void createNewCrashBlock() {
-        //tendrás que comprobar si el número de bloques creados menos el número máximo de bloques
-        //definidos en la configuración del juego es mayor que 0
-        //Si lo anterior es cierto, será necesario crear el bloque superior e inferior y
-        //añadirlos la lista de bloques creados. Además se actualizarán el número de bloques
-        //Por cada 2 bloques creados (superior e inferior) contamos sólo 1
+        if (this.gameActivity.getGameConfig().getCrashBlocks() -
+                this.play.getCrashBlockCreated() > 0) {
+            TopCrashView topCrashView = new TopCrashView(this.play);
+            this.play.getCrashViews().add(topCrashView);
+            this.play.getCrashViews().add(new DownCrashView(this.play, topCrashView));
+            this.play.setCrashBlockCreated(this.play.getCrashBlockCreated() + 1);
+        }
     }
 
-    //-----------------------------------------------------------------------------------------
-    //TODO Actividad 4.9 PMDM
-    //-----------------------------------------------------------------------------------------
-    //TODO se configura el tiempo de aparición de cada pregunta
     public void questionsConfig() {
-        //Se debe calcular el número de marcos por segundo que deben producirse antes de
-        //crear una nueva pregunta. Para ello es necesario saber el número máximo de FPS
-        // y el tiempo que debe transcurrir para una nueva pregunta.
+        GameConfig gameConfig = this.gameActivity.getGameConfig();
+        gameConfig.setFramesToNewQuestion(GameLoop.MAX_FPS * 60 / gameConfig.getTimeToQuestion());
     }
 
-    //-----------------------------------------------------------------------------------------
-    //TODO Actividad 4.9 PMDM
-    //-----------------------------------------------------------------------------------------
-    //TODO Se añade una nueva pregunta al array de preguntas
     public void createNewQuestion() {
-        //Crearemos la pregunta visual comprobando la complejidad de la misma. Cuando
-        //sepamos la complejidad almacenaremos la referencia de la pregunta en la propiedad
-        //correspondiente. Se debe diferenciar entre preguntas con complejidad simple y compleja
-        //para mostrar el bitmap correspondiente.
+        if (this.gameActivity.getGameConfig().getQuestions() -
+                this.play.getQuestionsCreated() > 0) {
+            Question question = new Question();
+            QuestionView goQuestion = new QuestionView(this.play, question);
+            if (goQuestion.getQuestion().getComplejidad() == GameUtil.PREGUNTA_COMPLEJIDAD_ALTA)
+                this.goDificultQuestion = goQuestion;
+            else
+                this.goEasyQuestion = goQuestion;
+            this.play.getQuestionViews().add(goQuestion);
+            this.play.setQuestionsCreated(this.play.getQuestionsCreated() + 1);
+        }
     }
-
     /**
      * Actualiza la posición de la imagen de fondo en la escena
      */

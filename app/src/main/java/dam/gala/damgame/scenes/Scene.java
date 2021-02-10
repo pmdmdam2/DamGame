@@ -16,7 +16,7 @@ public abstract class Scene {
     //scene
     private int screenWidth=0;
     private int screenHeight=0;
-    protected int[] backgroundScenes;
+    protected int backgroundScenes[];
     protected Scene scene;
     //question
     private int questionViewWidth =100;

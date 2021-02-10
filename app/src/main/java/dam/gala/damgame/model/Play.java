@@ -1,7 +1,6 @@
 package dam.gala.damgame.model;
 
 import androidx.annotation.NonNull;
-
 import dam.gala.damgame.activities.GameActivity;
 import dam.gala.damgame.utils.GameUtil;
 import dam.gala.damgame.views.CrashView;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 /**
- * Jugada que un jugador está realizando
+ * Jugada, recoge las principales características del juego
  * @author 2º DAM - IES Antonio Gala
  * @version 1.0
  */
@@ -23,27 +22,14 @@ public class Play {
     private Scene scene;
     private Player player;
     private GameConfig config;
-
     private int questionsCaptured = 0;
     private int questionsCreated = 0;
-    //-----------------------------------------------------------------------------------------
-    //Actividad 4.10 PMDM
-    //-----------------------------------------------------------------------------------------
-    //se contabiliza el número de bloques creados
     private int crashBlockCreated = 0;
-    //puntos acumulados
     private int points;
-    //vidas
     private int lifes;
-    //nivel
     private int level;
-    //preguntas
     private ArrayList<Question> questions = new ArrayList<>();
     private ArrayList<QuestionView> questionViews = new ArrayList<>();
-    //-----------------------------------------------------------------------------------------
-    //Actividad 4.10 PMDM
-    //-----------------------------------------------------------------------------------------
-    //propiedad para almacena los bloques de choque creados en cada jugada
     private ArrayList<CrashView> crashViews = new ArrayList<>();
 
     /**
@@ -144,11 +130,14 @@ public class Play {
     public ArrayList<QuestionView> getQuestionViews() {
         return questionViews;
     }
-    //-----------------------------------------------------------------------------------------
-    //Actividad 4.10 PMDM
-    //-----------------------------------------------------------------------------------------
-    //TODO métodos para modificar y obtener propiedades relacionadas con los blqques de choque
 
+    public int getCrashBlockCreated() {
+        return crashBlockCreated;
+    }
+
+    public void setCrashBlockCreated(int crashBlockCreated) {
+        this.crashBlockCreated = crashBlockCreated;
+    }
     public ArrayList<CrashView> getCrashViews() {
         return crashViews;
     }

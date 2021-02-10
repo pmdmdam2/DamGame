@@ -32,6 +32,8 @@ public class ExplosionView {
     public ExplosionView(GameView gameView){
         this.gameView = gameView;
         Scene scene = this.gameView.getScene();
+        //this.yCoord = bouncyView.yCoord;//this.scene.getScreenHeight() /2-this.scene.getExplosionViewHeight()/2;
+       // this.xCoord = bouncyView.xCoord;//this.scene.getExplosionViewWidth() /5;
         this.spriteWidth = scene.getExplosionViewWidth()/scene.getExplosionViewImgNumber();
         this.spriteHeight = scene.getExplosionViewHeight();
         this.landscapeSpeed=  scene.getScreenWidth()  *10/1080;

@@ -49,16 +49,11 @@ public class GameLoop extends  Thread{
                     framesASaltar = 0; // resetear los frames saltados
 
                     // Por cada ciclo de ejecución: Actualizar estado del juego
-                    //-----------------------------------------------------------------------------
                     this.gameView.updateState();
-                    //-----------------------------------------------------------------------------
-                    //por cada ciclo de ejecución hay que renderizar la imagen
+                    // renderizar la imagen
                     this.gameView.render(canvas);
-                    //-----------------------------------------------------------------------------
-
                     // Calcular cuánto tardó el ciclo
                     tiempoDiferencia = System.currentTimeMillis() - tiempoComienzo;
-
                     // Calcular cuánto debe dormir el thread antes de la siguiente iteración
                     tiempoDormir = (int)(TIEMPO_FRAME - tiempoDiferencia);
 

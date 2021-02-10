@@ -30,10 +30,6 @@ public class BouncyView {
     private GameConfig gameConfig;
     private QuestionView questionViewCatched;
 
-    /**
-     * Construye el OGP a partir del coreógrafo de la escena
-     * @param gameView Coreógrafo de la escena
-     */
     public BouncyView(GameView gameView) {
         this.gameView = gameView;
         Scene scene = this.gameView.getScene();
@@ -51,9 +47,6 @@ public class BouncyView {
         //creación y control del sonido asociado al movimiento del objeto principal
     }
 
-    /**
-     * Actualiza el estado del OGP
-     */
     public void updateState() {
         if(this.finished) {
             this.landed = false;
@@ -68,22 +61,26 @@ public class BouncyView {
             if (this.offset == 3)
                 this.offset = -1;
         }
-        //---------------------------------------------------------------------------------------
-        //TODO ACTIVIDAD 4.11
-        //---------------------------------------------------------------------------------------
-        //TODO Choque con alguna columna
-        //Se comprueba el OGP ha chocado con el OGP. Para ello hay que recorrer todos los
-        //bloques que hay en escena y se comprueba si hay intersección entre el OGP y algún bloque
-        //Si hay colisión se registra en la propiedad colisión
 
-        //---------------------------------------------------------------------------------------
-        //TODO ACTIVIDAD 4.12
-        //---------------------------------------------------------------------------------------
-        //TODO Captura de una pregunta
-        //Se comprueba si el OGP ha capturado (chocado) con alguna de las preguntas creadas (visual)
-        //Para ello hay que recorrer todas las preguntas creadas y comprobar si el área del OGP se
-        //intersecciona con el área de alguna pregunta
-        //Si hay captura habrá que eliminar el objeto visual de las preguntas creadas
+        for(CrashView crashView:this.gameView.getPlay().getCrashViews()){
+            if(this.xCoord+this.spriteWidth>=crashView.getxCoor()) {
+                this.collision = true;
+                break;
+            }
+        }
+
+        Iterator iterator = this.gameView.getPlay().getQuestionViews().iterator();
+        QuestionView questionView;
+        while(iterator.hasNext() && !this.isFinished()){
+            questionView = (QuestionView) iterator.next();
+            if(this.xCoord+this.spriteWidth>=questionView.getxCoor()
+                    && this.yCoord+this.spriteHeight>=questionView.getyCoor()) {
+                this.questionCatched = true;
+                questionView.setQuestionCatched(true);
+                this.questionViewCatched = questionView;
+                iterator.remove();
+            }
+        }
     }
 
     public void draw(Canvas canvas, Paint paint) {

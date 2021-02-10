@@ -2,10 +2,7 @@ package dam.gala.damgame.scenes;
 
 import android.graphics.Bitmap;
 import android.view.View;
-
 import dam.gala.damgame.activities.GameActivity;
-import dam.gala.damgame.scenes.Scene;
-
 /**
  * Escena del mundo submarino
  * @author 2º DAM - IES Antonio Gala
