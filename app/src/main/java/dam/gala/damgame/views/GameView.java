@@ -6,9 +6,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
+
+import com.example.damgame.R;
 
 import dam.gala.damgame.activities.GameActivity;
 import dam.gala.damgame.controllers.AudioController;
@@ -30,6 +35,9 @@ import java.util.Iterator;
  * @version 1.0
  */
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
+    private final int SCORE_POINTS=10;
+    private final int SCORE_LIFES=11;
+    private final int SCORE_ANSWERS=12;
     private GameActivity gameActivity;
     private SurfaceHolder surfaceHolder;
     private GameLoop gameLoop;
@@ -57,18 +65,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     //Parar el juego
     private boolean stopGame;
 
-
     public GameView(Context context) {
         super(context);
     }
-
     /**
      * Construye el objeto que actúa como coreógrafo de la escena del juego
-     * @param gameActivity Actividad principal del juego
+     * @param context Actividad principal del juego
+     * @param attrs Atributos de la vista del juego
      */
-    public GameView(@NonNull GameActivity gameActivity) {
-        super(gameActivity);
-        this.gameActivity = gameActivity;
+    public GameView(Context context, AttributeSet attrs) {
+        super((Context) context,attrs);
+        this.gameActivity = (GameActivity) context;
         this.touchController = new TouchController(this.gameActivity);
         this.audioController = new AudioController(this.gameActivity);
         this.gameConfig = gameActivity.getGameConfig();
@@ -86,8 +93,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         //explosion, cuando el flappy choca o cae al suelo
         this.explosionView = new ExplosionView(this);
         //captura de una pregunta
-        this.questionExplosionView = new QuestionExplosionView(this);
         //se carga el efecto animado de la captura de la pregunta
+        this.questionExplosionView = new QuestionExplosionView(this);
 
         //ambiente
         this.sceneLoad();
@@ -133,6 +140,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 }else if(this.bouncyView.isLanded() || this.bouncyView.isColluded()){
                     //se vuelve a empezar el juego con la siguiente vida
                     this.audioController.startAudioPlay(this.getScene());
+                    this.updateScore(SCORE_LIFES,String.valueOf(this.play.getLifes()));
+                    this.bouncyView.reStart();
                 }else if(this.bouncyView.isQuestionCatched()){
                     //poner audio para la pregunta
                     //mostrar cuadro de diálogo para la pregunta
@@ -392,4 +401,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public AudioController getAudioController() {
         return this.audioController;
     }
+    private void updateScore(final int what, final String text){
+        this.gameActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+               switch (what){
+                   case SCORE_ANSWERS:
+                       break;
+                   case SCORE_LIFES:
+                       GameView.this.gameActivity.setTextTvLifes(text);
+                       break;
+                   case SCORE_POINTS:
+                       break;
+               }
+            }
+        });
+    }
+
 }

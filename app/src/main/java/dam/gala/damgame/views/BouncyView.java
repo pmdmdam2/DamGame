@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import dam.gala.damgame.model.GameConfig;
+import dam.gala.damgame.model.Play;
 import dam.gala.damgame.scenes.Scene;
 
 import java.util.Iterator;
@@ -28,9 +29,11 @@ public class BouncyView {
     private GameView gameView;
     private GameConfig gameConfig;
     private QuestionView questionViewCatched;
+    private Play play;
 
     public BouncyView(GameView gameView) {
         this.gameView = gameView;
+        this.play = gameView.getPlay();
         Scene scene = this.gameView.getScene();
         gameConfig = gameView.getGameActivity().getGameConfig();
         this.yCoord = scene.getScreenHeight() / 2 - scene.getBouncyViewHeight() / 2;
@@ -53,6 +56,7 @@ public class BouncyView {
             this.spriteIndex = -1;
             this.finished = true;
             this.landed = true;
+            this.play.setLifes(this.play.getLifes()-1);
         } else {
             if (this.spriteIndex == 3)
                 this.spriteIndex = -1;
@@ -61,6 +65,7 @@ public class BouncyView {
         for(CrashView crashView:this.gameView.getPlay().getCrashViews()){
             if(this.xCoord+this.spriteWidth>=crashView.getxCoor()) {
                 this.collision = true;
+                this.play.setLifes(this.play.getLifes()-1);
                 break;
             }
         }
@@ -143,5 +148,10 @@ public class BouncyView {
     }
     public void setQuestionViewCatched(QuestionView questionViewCatched){
         this.questionViewCatched = questionViewCatched;
+    }
+    public void reStart(){
+        this.collision=false;
+        this.landed = false;
+        this.questionCatched = false;
     }
 }

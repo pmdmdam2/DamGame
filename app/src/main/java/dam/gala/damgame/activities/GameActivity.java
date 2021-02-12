@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,6 +47,12 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
     private GameConfig config;
     private Scene scene;
     private AudioController audioController;
+    //Vista para la puntuación;
+    private TextView tvPoints;
+    //Vista para las vidas;
+    private TextView tvLifes;
+    //Vista para las respuestas;
+    private TextView tvRespuestas;
     /**
      * Método de callback del ciclo de vida de la actividad, llamada anterior a que la actividad
      * pasé al estado 'Activa'
@@ -75,12 +82,13 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
                 getString("ambient_setting",String.valueOf(GameUtil.TEMA_DESIERTO)));
         this.gameMove = Play.createGameMove(this,this.sceneCode, this.config);
         this.scene = this.gameMove.getScene();
-        this.gameView = new GameView(this);
-        this.audioController = this.gameView.getAudioController();
 
-        this.audioController.startAudioPlay(this.scene);
+        setContentView(R.layout.activity_game);
+        this.gameView = findViewById(R.id.svGame);
         hideSystemUI();
-        setContentView(this.gameView);
+        this.audioController = this.gameView.getAudioController();
+        this.audioController.startAudioPlay(this.scene);
+        this.tvLifes = findViewById(R.id.tvLifes);
     }
 
     /**
@@ -227,5 +235,9 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
                 //TODO Este método hay que revisarlo y borrarlo si finalmente no se usa
             }
         }
+    }
+
+    public void setTextTvLifes(String textTvLifes){
+        this.tvLifes.setText(textTvLifes);
     }
 }

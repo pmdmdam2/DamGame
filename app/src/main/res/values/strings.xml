@@ -41,5 +41,8 @@
     <!-- ASIGNATURAS -->
     <string name="eso1_biologia_geologia">ESO 1º/Biología y Geología</string>
     <string name="comenzar">Comenzar</string>
+    <string name="vidas">Vidas</string>
+    <string name="Puntos">Puntos</string>
+    <string name="respuestas">Respuestas</string>
 
 </resources>
