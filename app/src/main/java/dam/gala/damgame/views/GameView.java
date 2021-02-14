@@ -59,7 +59,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private AudioController audioController;
     //Parar el juego
     private boolean stopGame;
-    private int loopsToEnd;
+    //Terminar el juego
+    private boolean endingGame;
 
     public GameView(Context context) {
         super(context);
@@ -139,15 +140,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
 
             if ((this.bouncyView.isLanded() || this.bouncyView.isCrashed())
-                ) {
+            ) {
                 this.explosionView.draw(canvas, myPaint);
-                if(this.explosionView.isFinished() && this.play.isFinished() &&
-                        !this.isGameStoped()){
-                    this.setStopGame(true);
+                if (this.explosionView.isFinished() && this.play.isFinished() &&
+                        !this.isEndingGame()) {
+                    this.setEndingGame(true);
                     this.endGame(false);
                 }
-            }
-            else
+            } else
                 this.bouncyView.draw(canvas, myPaint);
 
             for (QuestionView questionView : this.play.getQuestionViews())
@@ -168,7 +168,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         this.updateSceneBackground();
 
         if (this.gameConfig.getFramesToNewCrashBlock() == 0) {
-            if (this.play.getCrashViews().size() < (this.gameConfig.getCrashBlocks()*2))
+            if (this.play.getCrashViews().size() < (this.gameConfig.getCrashBlocks() * 2))
                 this.createNewCrashBlock();
 
             this.gameConfig.setFramesToNewCrashBlock(GameLoop.MAX_FPS * 60 /
@@ -200,15 +200,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         if (!this.bouncyView.isLanded() && !this.bouncyView.isCrashed()) {
             this.bouncyView.updateState();
-        }else if (this.bouncyView.isLanded() || this.bouncyView.isCrashed()) {
-            if(!this.audioController.isAudioExplosionStarted())
+        } else if (this.bouncyView.isLanded() || this.bouncyView.isCrashed()) {
+            if (!this.audioController.isAudioExplosionStarted())
                 this.audioController.startAudioExplosion();
             this.explosionView.updateState();
-            if(this.explosionView.isFinished() && !this.play.isFinished())
+            if (this.explosionView.isFinished() && !this.play.isFinished())
                 this.restart();
         } else if (this.bouncyView.isQuestionCatched()) {
             this.questionExplosionView.updateState();
         }
+
     }
 
     /**
@@ -280,6 +281,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             this.scene.setxCurrentImg(this.screenWidth);
             this.scene.setxNextImg(0);
         }
+    }
+
+    /**
+     * Comprueba si el juego va a finalizar
+     *
+     * @return Devuelve el estado de finalización del juego
+     */
+    public boolean isEndingGame() {
+        return this.endingGame;
+    }
+
+    /**
+     * Asigna el estado de finalización de juego
+     *
+     * @param endingGame Finalización del juego (true)
+     */
+    public void setEndingGame(boolean endingGame) {
+        this.endingGame = endingGame;
     }
 
     /**
@@ -373,7 +392,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return this.audioController;
     }
 
-    public void restart(){
+    public void restart() {
         this.bouncyView.reStart();
         this.explosionView.restart();
         this.play.getQuestionViews().clear();
@@ -384,12 +403,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         this.play.setCrashBlockCreated(0);
         this.play.setQuestionsCreated(0);
     }
-    public void endGame(boolean force){
+
+    public void endGame(boolean force) {
         this.audioController.stopAudioPlay();
-        if(!this.audioController.isAudioEndGameStarted())
+        if (!this.audioController.isAudioEndGameStarted())
             this.audioController.startAudioEndGame();
         this.gameLoop.endGame();
-        if(!force) {
+        if (!force) {
             this.gameActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -407,7 +427,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             hideSystemUI();
         }
     }
-    private void hideSystemUI(){
+
+    private void hideSystemUI() {
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
