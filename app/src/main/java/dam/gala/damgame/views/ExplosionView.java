@@ -15,12 +15,12 @@ import dam.gala.damgame.scenes.Scene;
 public class ExplosionView {
     private int spriteWidth;
     private int spriteHeight;
-    public int xCoord, yCoord;
+    public float xCoord, yCoord;
     private int spriteIndex;
     private GameView gameView;
     private Bitmap explosionBitmap;
-    private boolean finished;
     private int bouncyViewHeigth;
+    private boolean explosionFinished;
 
     /**
      * Construye la animación para una explosión
@@ -33,6 +33,7 @@ public class ExplosionView {
         this.spriteHeight = scene.getExplosionViewHeight();
         this.explosionBitmap = scene.getExplosionViewBitmap();
         this.bouncyViewHeigth = scene.getBouncyViewHeight();
+        this.explosionFinished =true;
         spriteIndex = -1; //recien creado
     }
 
@@ -40,7 +41,6 @@ public class ExplosionView {
      * Actualiza el estado la animación de explosión
      */
     public void updateState(){
-        if(isFinished()) return;
         //incrementamos el estado al siguiente momento de la explosión
         this.spriteIndex++;
     }
@@ -51,7 +51,7 @@ public class ExplosionView {
      * @param paint Estilo y color para pintar en el lienzo
      */
     public void draw(Canvas canvas, Paint paint){
-        if(!isFinished()) {
+        //if(!isFinished()) {
             this.yCoord = this.gameView.getBouncyView().getyCurrentCoord();
             this.xCoord = this.gameView.getBouncyView().getxCoord();
             //Calculamos el cuadrado del sprite que vamos a dibujar
@@ -65,9 +65,7 @@ public class ExplosionView {
                     (int) this.yCoord + this.bouncyViewHeigth);
 
             canvas.drawBitmap(this.explosionBitmap,startRect,endRect,paint);
-        }else{
-            this.gameView.setStopGame(true);
-        }
+        //}
 
     }
     /**
@@ -76,10 +74,17 @@ public class ExplosionView {
      * imágenes del sprite de explosión
      */
     public boolean isFinished(){
-        return this.spriteIndex>=this.gameView.getScene().getExplosionViewImgNumber();
+        this.explosionFinished =
+                this.spriteIndex==-1 || this.spriteIndex>=this.gameView.getScene().getExplosionViewImgNumber();
+        return this.explosionFinished;
     }
 
     public Bitmap getExplosionBitmap(){
         return this.explosionBitmap;
+    }
+
+    public void restart(){
+        this.explosionFinished = true;
+        this.spriteIndex=-1;
     }
 }

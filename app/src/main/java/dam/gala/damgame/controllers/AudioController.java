@@ -11,8 +11,11 @@ import dam.gala.damgame.scenes.Scene;
  */
 public class AudioController {
     private GameActivity gameActivity;
-    private MediaPlayer mediaPlay;
-    private boolean isMediaExplosionStarted;
+    private MediaPlayer mediaPlay, mediaEndGame;
+    private Scene scene;
+    private boolean audioExplosionStarted;
+    private boolean audioQuestionCatchedStarted;
+    private boolean audioEndGameStarted;
 
     /**
      * Controlador de audio
@@ -20,14 +23,14 @@ public class AudioController {
      */
     public AudioController(GameActivity gameActivity){
         this.gameActivity = gameActivity;
+        this.scene = this.gameActivity.getPlay().getScene();
     }
 
     /**
      * Inicio de reproducción de audio del sonido principal del juego
-     * @param scene Escena seleccionada para el juego. El audio es distinto para cada escena
      */
-    public void startAudioPlay(Scene scene){
-        this.mediaPlay = MediaPlayer.create(gameActivity,scene.getAudioPlay());
+    public void startSceneAudioPlay(){
+        this.mediaPlay = MediaPlayer.create(gameActivity,this.scene.getAudioPlay());
         this.mediaPlay.setLooping(true);
         this.mediaPlay.start();
     }
@@ -39,32 +42,60 @@ public class AudioController {
     }
     /**
      * Inicio de la reproducción de audio del sonido correspondiente a una explosion
-     * @param scene Escena seleccionada del juego. El sonido de la explosión es distinto para
-     *              cada escena
      */
-    public void startAudioExplosion(Scene scene){
-        MediaPlayer mediaExplosion = MediaPlayer.create(gameActivity,scene.getAudioExplosion());
-        mediaExplosion.setVolume(120,120);
+    public void startAudioExplosion(){
+        MediaPlayer mediaExplosion = MediaPlayer.create(gameActivity,this.scene.getAudioExplosion());
+        mediaExplosion.setVolume(80,80);
         mediaExplosion.start();
-        this.isMediaExplosionStarted = true;
+        this.audioExplosionStarted = true;
+    }
+
+    /**
+     * Detiene la reproducción de sonido de la explosión
+     */
+    public void stopAudioExplosion(){
+        this.audioExplosionStarted =false;
     }
     /**
      * Inicio de la reproducción de audio del sonido correspondiente a la captura de una
      * pregunta.
-     * @param scene Escena seleccionada del juego. El sonido de la captura es distinto para
-     *              cada escena
      */
-    public void startAudioQuestionExplosion(Scene scene){
-        MediaPlayer mediaExplosion = MediaPlayer.create(gameActivity,scene.getAudioQuestionExplosion());
-        mediaExplosion.setVolume(120,120);
+    public void startAudioQuestionCatched(){
+        MediaPlayer mediaExplosion = MediaPlayer.create(gameActivity,this.scene.getAudioQuestionCatched());
+        mediaExplosion.setVolume(80,80);
         mediaExplosion.start();
-        this.isMediaExplosionStarted = true;
+        this.audioExplosionStarted = true;
     }
+
+    /**
+     * Detiene el sonido de la captura de una pregunta
+     */
+    public void stopAudioQuestionCatched(){
+        this.audioQuestionCatchedStarted = false;
+    }
+
     /**
      * Obtiene el estado de la reproducción de sonido de la explosión
      * @return Devuelve true si la reproducción del sonido de la explosión se ha iniciado
      */
-    public boolean isMediaExplosionStarted(){
-        return this.isMediaExplosionStarted;
+    public boolean isAudioExplosionStarted(){
+        return this.audioExplosionStarted;
+    }
+
+    public void startAudioEndGame(){
+        this.mediaPlay.stop();
+        this.mediaEndGame = MediaPlayer.create(gameActivity,this.scene.getAudioEndGame());
+        this.mediaEndGame.setVolume(120,120);
+        this.mediaEndGame.start();
+        this.mediaEndGame.setLooping(true);
+        this.audioEndGameStarted = true;
+    }
+
+    public boolean isAudioEndGameStarted(){
+        return this.audioEndGameStarted;
+    }
+
+    public void stopAudioEndGame(){
+        this.audioEndGameStarted=false;
     }
 }

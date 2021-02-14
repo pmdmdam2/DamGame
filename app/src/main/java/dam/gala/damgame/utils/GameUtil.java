@@ -1,5 +1,7 @@
 package dam.gala.damgame.utils;
 
+import android.view.View;
+
 /**
  * Utiles con características inmutables
  * @author 2º DAM - IES Antonio Gala
@@ -19,6 +21,6 @@ public abstract class GameUtil {
     public static final int TEMA_SUBMARINO=105;
     public static final int TEMA_VOLCANES=106;
     public static final int HIGH_COMPLEX_SPEED=5;
-    public static final int LOW_COMPLEX_SPEED=2;
+    public static final int LOW_COMPLEX_SPEED=4;
     public static final int POINTS_TO_CHANGE_LEVEL=2000;
 }

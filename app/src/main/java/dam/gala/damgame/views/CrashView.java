@@ -14,12 +14,12 @@ public class CrashView {
     private int minHeight;
     private int height;
     private int width;
-    private int xCoor, yCoor;
+    private float xCoor, yCoor;
     private Bitmap crashBitmap;
     private Scene scene;
     private Play play;
     private int crashBlockGap;
-    private int horizontalSpeed;
+    private float horizontalSpeed;
 
     /**
      * Construye bloques de choque en la jugada indicada
@@ -35,7 +35,7 @@ public class CrashView {
                 this.getScene().getCrashViewBitmapTop():
                 this.getScene().getCrashViewBitmapDown();
         this.xCoor = this.scene.getScreenWidth();
-        this.crashBlockGap = (int)(this.scene.getScreenHeight() * 0.15);
+        this.crashBlockGap = (int)(0.6*gameView.getBouncyView().getBouncyBitmap().getHeight());
         this.horizontalSpeed = this.scene.getScreenWidth() *10/1920;
     }
 
@@ -83,15 +83,15 @@ public class CrashView {
         this.width = width;
     }
 
-    protected int getxCoor() {
+    protected float getxCoor() {
         return xCoor;
     }
 
-    protected void setxCoor(int xCoor) {
+    protected void setxCoor(float xCoor) {
         this.xCoor = xCoor;
     }
 
-    protected int getyCoor() {
+    protected float getyCoor() {
         return yCoor;
     }
 

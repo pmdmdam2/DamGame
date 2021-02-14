@@ -16,16 +16,16 @@ public class TopCrashView extends CrashView{
     public TopCrashView(@NonNull GameView gameView) {
         super(gameView);
         Random random = new Random();
-        int max;
+        int max, min;
         //la altura del bloque se generará aleatoriamente. Los valores oscilarán entre
         //la altura de la pantalla menos la altura del OGP, menos la altura mínima del bloque
         //, menos el hueco
-        max = this.getScene().getScreenHeight() - (this.getScene().
-                getBouncyViewHeight() + this.getMinHeight()
+        max = this.getScene().getScreenHeight()-(this.getScene().getBouncyViewHeight()
                 + this.getCrashBlockGap());
 
-        //se calculan las coordenadas x e y
-        this.setHeight(random.nextInt(max - this.getMinHeight()) + this.getMinHeight());
-        this.setyCoor(this.getHeight()-this.getScene().getScreenHeight());
+
+        min = this.getMinHeight();
+
+        this.setyCoor(-(this.getHeight()-(random.nextInt((max - min) ) + min)));
     }
 }

@@ -44,5 +44,6 @@
     <string name="vidas">Vidas</string>
     <string name="Puntos">Puntos</string>
     <string name="respuestas">Respuestas</string>
+    <string name="cero">0</string>
 
 </resources>

@@ -31,13 +31,11 @@ public class DesertScene extends Scene {
     }
     @Override
     public int getQuestionViewWidth() {
-        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
-                R.drawable.desert_quest_d, this.gameActivity.getTheme()).getMinimumWidth();
+        return  this.getQuestionViewBitmap(GameUtil.PREGUNTA_COMPLEJIDAD_BAJA).getWidth();
     }
     @Override
     public int getQuestionViewHeight() {
-        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
-                R.drawable.desert_quest_d, this.gameActivity.getTheme()).getMinimumHeight();
+        return  this.getQuestionViewBitmap(GameUtil.PREGUNTA_COMPLEJIDAD_BAJA).getHeight();
     }
 
     @Override
@@ -55,14 +53,12 @@ public class DesertScene extends Scene {
 
     @Override
     public int getBouncyViewWidth() {
-        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
-                R.drawable.desert_hatbird, this.gameActivity.getTheme()).getMinimumWidth();
+        return  this.getBouncyViewBitmap().getWidth();
     }
 
     @Override
     public int getBouncyViewHeight() {
-        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
-                R.drawable.desert_hatbird, this.gameActivity.getTheme()).getMinimumHeight();
+        return  this.getBouncyViewBitmap().getHeight();
     }
 
     @Override
@@ -77,7 +73,7 @@ public class DesertScene extends Scene {
 
     @Override
     public int getBouncyBitmapId() {
-        return R.drawable.desert_bg;
+        return R.drawable.desert_anim_bg;
     }
 
     @Override
@@ -127,14 +123,12 @@ public class DesertScene extends Scene {
 
     @Override
     public int getExplosionViewWidth() {
-        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
-                R.drawable.explosion_out, this.gameActivity.getTheme()).getMinimumWidth();
+        return  this.getExplosionViewBitmap().getWidth();
     }
 
     @Override
     public int getExplosionViewHeight() {
-        return ResourcesCompat.getDrawable(this.gameActivity.getResources(),
-                R.drawable.explosion_out, this.gameActivity.getTheme()).getMinimumHeight();
+        return  this.getExplosionViewBitmap().getHeight();
     }
 
     @Override
@@ -164,12 +158,17 @@ public class DesertScene extends Scene {
 
     @Override
     public int getAudioExplosion() {
-        return R.raw.explosion;
+        return R.raw.bouncy_crashed;
     }
 
     @Override
     public int getAudioCrash() {
         return R.raw.crash;
+    }
+
+    @Override
+    public int getAudioEndGame() {
+        return R.raw.forgotten_eyes;
     }
 
     @Override
@@ -218,7 +217,22 @@ public class DesertScene extends Scene {
     }
 
     @Override
-    public int getAudioQuestionExplosion() {
+    public int getAudioQuestionCatched() {
         return R.raw.shimmer;
+    }
+
+    @Override
+    public Bitmap getScoreLifes() {
+        return BitmapFactory.decodeResource(gameActivity.getResources(), R.drawable.desert_lifes_score);
+    }
+
+    @Override
+    public Bitmap getScorePoints() {
+        return BitmapFactory.decodeResource(gameActivity.getResources(), R.drawable.desert_points_score);
+    }
+
+    @Override
+    public Bitmap getScoreAnswers() {
+        return BitmapFactory.decodeResource(gameActivity.getResources(), R.drawable.desert_answer_score);
     }
 }

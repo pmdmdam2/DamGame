@@ -18,11 +18,10 @@ import java.util.Iterator;
 public class BouncyView {
     private int spriteWidth;
     private int spriteHeight;
-    public int xCoord, yCoord, yCurrentCoord;
+    public float xCoord, yCoord, yCurrentCoord;
     private int spriteIndex;
     private Bitmap bouncyBitmap;
-    private int gravity;
-    private boolean finished;
+    private float gravity;
     private boolean landed;
     private boolean collision;
     private boolean questionCatched;
@@ -30,11 +29,12 @@ public class BouncyView {
     private GameConfig gameConfig;
     private QuestionView questionViewCatched;
     private Play play;
+    private Scene scene;
 
     public BouncyView(GameView gameView) {
         this.gameView = gameView;
         this.play = gameView.getPlay();
-        Scene scene = this.gameView.getScene();
+        this.scene = this.gameView.getScene();
         gameConfig = gameView.getGameActivity().getGameConfig();
         this.yCoord = scene.getScreenHeight() / 2 - scene.getBouncyViewHeight() / 2;
         this.xCoord = scene.getBouncyViewWidth() / 5;
@@ -47,39 +47,40 @@ public class BouncyView {
     }
 
     public void updateState() {
-        if(this.finished) {
-            this.landed = false;
+        if(this.isFinished())
             return;
-        }
+
         if (gravity > (this.yCoord)) {
             this.gravity = 0;
             this.spriteIndex = -1;
-            this.finished = true;
             this.landed = true;
             this.play.setLifes(this.play.getLifes()-1);
+            //this.reStart();
         } else {
             if (this.spriteIndex == 3)
                 this.spriteIndex = -1;
         }
-
-        for(CrashView crashView:this.gameView.getPlay().getCrashViews()){
-            if(this.xCoord+this.spriteWidth>=crashView.getxCoor()) {
-                this.collision = true;
-                this.play.setLifes(this.play.getLifes()-1);
-                break;
+        if(!this.landed) {
+            for (CrashView crashView : this.gameView.getPlay().getCrashViews()) {
+                if (this.xCoord + this.spriteWidth >= crashView.getxCoor()) {
+                    this.collision = true;
+                    this.play.setLifes(this.play.getLifes() - 1);
+                    //this.reStart();
+                    break;
+                }
             }
-        }
 
-        Iterator iterator = this.gameView.getPlay().getQuestionViews().iterator();
-        QuestionView questionView;
-        while(iterator.hasNext() && !this.isFinished()){
-            questionView = (QuestionView) iterator.next();
-            if(this.xCoord+this.spriteWidth>=questionView.getxCoor()
-                    && this.yCoord+this.spriteHeight>=questionView.getyCoor()) {
-                this.questionCatched = true;
-                questionView.setQuestionCatched(true);
-                this.questionViewCatched = questionView;
-                iterator.remove();
+            Iterator iterator = this.gameView.getPlay().getQuestionViews().iterator();
+            QuestionView questionView;
+            while (iterator.hasNext() && !this.isFinished()) {
+                questionView = (QuestionView) iterator.next();
+                if (this.xCoord + this.spriteWidth >= questionView.getxCoor()
+                        && this.yCoord + this.spriteHeight >= questionView.getyCoor()) {
+                    this.questionCatched = true;
+                    questionView.setQuestionCatched(true);
+                    this.questionViewCatched = questionView;
+                    iterator.remove();
+                }
             }
         }
     }
@@ -95,9 +96,9 @@ public class BouncyView {
         Rect startRect = new Rect(this.spriteIndex * this.spriteWidth, 0,
                 (this.spriteIndex + 1) * this.spriteWidth
                 , this.spriteHeight);
-        Rect endRect = new Rect(this.xCoord, this.yCoord + this.gravity, this.xCoord +
-                this.spriteWidth
-                , this.yCoord + this.spriteHeight + this.gravity);
+        Rect endRect = new Rect((int)this.xCoord, (int)(this.yCoord + this.gravity), (int)(this.xCoord +
+                this.spriteWidth)
+                , (int)(this.yCoord + this.spriteHeight + this.gravity));
         canvas.drawBitmap(this.getBouncyBitmap(), startRect, endRect, paint);
         //comentar las líneas de abajo para quitar la gravedad
         this.gravity+=this.gameConfig.getGravity();
@@ -111,18 +112,21 @@ public class BouncyView {
      * @return boolean Valor true significa que se debe detener la animación
      */
     public boolean isFinished() {
-        return this.landed || this.collision || this.questionCatched;
+        if(this.play.getLifes()==0){
+            return true;
+        }
+        return false;
     }
 
-    public int getxCoord() {
+    public float getxCoord() {
         return this.xCoord;
     }
 
-    public int getyCoord() {
+    public float getyCoord() {
         return this.yCoord;
     }
 
-    public int getyCurrentCoord(){
+    public float getyCurrentCoord(){
         return this.yCurrentCoord;
     }
 
@@ -137,7 +141,7 @@ public class BouncyView {
     public boolean isLanded() {
         return this.landed;
     }
-    public boolean isColluded(){
+    public boolean isCrashed(){
         return this.collision;
     }
     public boolean isQuestionCatched(){
@@ -150,8 +154,12 @@ public class BouncyView {
         this.questionViewCatched = questionViewCatched;
     }
     public void reStart(){
+        this.gravity = 0;
+        this.spriteIndex = -1;
         this.collision=false;
         this.landed = false;
         this.questionCatched = false;
+        this.yCoord = this.scene.getScreenHeight() / 2 - this.scene.getBouncyViewHeight() / 2;
+        this.xCoord = this.scene.getBouncyViewWidth() / 5;
     }
 }

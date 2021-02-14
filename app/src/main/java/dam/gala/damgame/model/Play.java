@@ -1,10 +1,13 @@
 package dam.gala.damgame.model;
 
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import dam.gala.damgame.activities.GameActivity;
 import dam.gala.damgame.utils.GameUtil;
 import dam.gala.damgame.views.CrashView;
 import dam.gala.damgame.scenes.DesertScene;
+import dam.gala.damgame.views.GameView;
 import dam.gala.damgame.views.QuestionView;
 import dam.gala.damgame.scenes.Scene;
 
@@ -17,6 +20,9 @@ import java.util.ArrayList;
  * @version 1.0
  */
 public class Play {
+    private final int SCORE_POINTS = 10;
+    private final int SCORE_LIFES = 11;
+    private final int SCORE_ANSWERS = 12;
     private LocalDateTime starDateTime;
     private LocalDateTime endDateTime;
     private Scene scene;
@@ -28,6 +34,7 @@ public class Play {
     private int points;
     private int lifes;
     private int level;
+    private GameActivity gameActivity;
     private ArrayList<Question> questions = new ArrayList<>();
     private ArrayList<QuestionView> questionViews = new ArrayList<>();
     private ArrayList<CrashView> crashViews = new ArrayList<>();
@@ -35,7 +42,9 @@ public class Play {
     /**
      * Constructor privado para la factoría
      */
-    private Play() {
+    private Play(GameActivity gameActivity) {
+        this.gameActivity = gameActivity;
+        this.lifes = 3;
     }
     /**
      * Crea la jugada a partir de la escena elgida. Es un método de factoría.
@@ -44,11 +53,8 @@ public class Play {
      * @param gameConfig Configuración del juego para la jugada
      * @return La jugada actual del juego (Play)
      */
-    public static Play createGameMove(@NonNull GameActivity gameActivity, int sceneCode
-            , GameConfig gameConfig) {
-        Play play = new Play();
-        play.setConfig(gameConfig);
-        play.setLifes(3);
+    public static Play createGameMove(@NonNull GameActivity gameActivity, int sceneCode) {
+        Play play = new Play(gameActivity);
         play.questions = new ArrayList<>();
         switch (sceneCode) {
             case GameUtil.TEMA_DESIERTO:
@@ -120,7 +126,7 @@ public class Play {
     public GameConfig getConfig() {
         return config;
     }
-    private void setConfig(GameConfig config) {
+    public void setConfig(GameConfig config) {
         this.config = config;
     }
     //-----------------------------------------------------------------------------------------
@@ -151,6 +157,7 @@ public class Play {
     }
     public void setLifes(int lifes) {
         this.lifes = lifes;
+        this.updateScore(SCORE_LIFES, this.getLifes());
     }
     //-----------------------------------------------------------------------------------------
     //Métodos getter y setters para la vida del OGP
@@ -165,7 +172,28 @@ public class Play {
     //Estado de finalización del juego
     //-----------------------------------------------------------------------------------------
     public boolean isFinished() {
-        return this.lifes == 0 || (this.scene.getNextImgIndex() < this.scene.getCurrentImgIndex()
+         return this.lifes == 0 || (this.scene.getNextImgIndex() < this.scene.getCurrentImgIndex()
                 && this.scene.getNextImgIndex() == 0);
+    }
+    /**
+     * Actualiza los datos de puntuación, vidas y respuestas
+     * @param what  Lo que se quiere actualizar
+     * @param value Valor de actualización
+     */
+    private void updateScore(final int what, final Object value) {
+        this.gameActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (what) {
+                    case SCORE_ANSWERS:
+                        break;
+                    case SCORE_LIFES:
+                        Play.this.gameActivity.updateLifes((Integer) value);
+                        break;
+                    case SCORE_POINTS:
+                        break;
+                }
+            }
+        });
     }
 }

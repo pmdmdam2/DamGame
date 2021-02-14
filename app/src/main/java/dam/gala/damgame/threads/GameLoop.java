@@ -2,6 +2,10 @@ package dam.gala.damgame.threads;
 
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 import dam.gala.damgame.views.GameView;
 
 /**
@@ -11,11 +15,11 @@ import dam.gala.damgame.views.GameView;
  */
 public class GameLoop extends  Thread{
     // Frames por segundo deseados
-    public static final int MAX_FPS = 60;
+    public static final int MAX_FPS = 20;
     // Máximo número de frames saltados
     private static final int MAX_FRAMES_SALTADOS = 5;
     // El periodo de frames
-    private static final int TIEMPO_FRAME = 100 / MAX_FPS;
+    private static final int TIEMPO_FRAME = 1000 / MAX_FPS;
     private int framesToNewQuestion=0;
     private GameView gameView;
     private SurfaceHolder surfaceHolder;
@@ -50,6 +54,7 @@ public class GameLoop extends  Thread{
 
                     // Por cada ciclo de ejecución: Actualizar estado del juego
                     this.gameView.updateState();
+
                     // renderizar la imagen
                     this.gameView.render(canvas);
                     // Calcular cuánto tardó el ciclo
@@ -66,12 +71,12 @@ public class GameLoop extends  Thread{
                         } catch (InterruptedException e) {}
                     }
 
-                    /*while (tiempoDormir < 0 && framesASaltar < MAX_FRAMES_SALTADOS) {
+                    while (tiempoDormir < 0 && framesASaltar < MAX_FRAMES_SALTADOS) {
                         // Vamos mal de tiempo: Necesitamos ponernos al día
                         gameView.updateState(); // actualizar si rendering
                         tiempoDormir += TIEMPO_FRAME;  // actualizar el tiempo de dormir
                         framesASaltar++;
-                    }*/
+                    }
                 }
             } finally {
                 // si hay excepción desbloqueamos el canvas
@@ -82,14 +87,15 @@ public class GameLoop extends  Thread{
         }
     }
 
-    public int getFramesToNewQuestion() {
-        return framesToNewQuestion;
-    }
-
-    public void setFramesToNewQuestion(int framesToNewQuestion) {
-        this.framesToNewQuestion = framesToNewQuestion;
-    }
     public void endGame(){
-        this.running=false;
+        long now = System.currentTimeMillis();
+        //running timer task as daemon thread
+        Timer timer = new Timer(false);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                GameLoop.this.running=false;
+            }
+        },5000);
     }
 }

@@ -1,5 +1,8 @@
 package dam.gala.damgame.model;
 
+import dam.gala.damgame.activities.GameActivity;
+import dam.gala.damgame.scenes.Scene;
+
 /**
  * Gestiona la configuración de la aplicación
  * @author 2º DAM - IES Antonio Gala
@@ -7,16 +10,23 @@ package dam.gala.damgame.model;
  */
 public class GameConfig {
     //questions
-    private int questions=20;
-    private int timeToQuestion =50;
+    private int questions=5;
+    private int timeToQuestion = 60;
     private int framesToNewQuestion=0;
     //crash blocks
     private int crashBlocks= 5;
-    private int timeToCrashBlock=60;
+    private int timeToCrashBlock=20;
     private int framesToNewCrashBlock=0;
     private int minHeightCrashBlock =0;
     //gravity
     private int gravity=3;
+    private Scene scene;
+
+    public GameConfig(Scene scene){
+        this.scene = scene;
+        this.crashBlocks = scene.getScreenWidth()/(2*scene.getCrashViewWidth());
+        this.minHeightCrashBlock = scene.getBouncyViewHeight()/2;
+    }
 
     /* Métodos getter y setters para propiedades de configuración del juego */
 

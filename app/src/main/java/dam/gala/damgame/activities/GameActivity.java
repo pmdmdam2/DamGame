@@ -3,21 +3,24 @@ package dam.gala.damgame.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.damgame.R;
+
+import java.util.ArrayList;
 
 import dam.gala.damgame.controllers.AudioController;
 import dam.gala.damgame.fragments.QuestionDialogFragment;
@@ -31,7 +34,6 @@ import dam.gala.damgame.views.GameView;
 
 import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
 import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-import static android.view.View.SYSTEM_UI_FLAG_IMMERSIVE;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
@@ -49,10 +51,13 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
     private AudioController audioController;
     //Vista para la puntuación;
     private TextView tvPoints;
-    //Vista para las vidas;
-    private TextView tvLifes;
+    private ImageView ivPoints;
+    //Array para las vidas;
+    private ArrayList<ImageView> lifes;
     //Vista para las respuestas;
-    private TextView tvRespuestas;
+    private TextView tvAnswers;
+    private ImageView ivAnswers;
+
     /**
      * Método de callback del ciclo de vida de la actividad, llamada anterior a que la actividad
      * pasé al estado 'Activa'
@@ -64,7 +69,6 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
         super.onCreate(savedInstanceState);
         setTema();
         setContentView(R.layout.activity_main);
-        this.config = new GameConfig();
 
         Button btIniciar = findViewById(R.id.btIniciar);
         btIniciar.setOnClickListener(new View.OnClickListener() {
@@ -73,24 +77,58 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
                 startGame();
             }
         });
+
+        // This callback will only be called when MyFragment is at least Started.
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                GameActivity.this.gameView.endGame(true);
+                finish();
+                System.exit(0);
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
     }
+
+
     /**
      * Inicio del juego
      */
     private void startGame(){
         this.sceneCode = Integer.parseInt(getDefaultSharedPreferences(this).
                 getString("ambient_setting",String.valueOf(GameUtil.TEMA_DESIERTO)));
-        this.gameMove = Play.createGameMove(this,this.sceneCode, this.config);
+        this.gameMove = Play.createGameMove(this,this.sceneCode);
         this.scene = this.gameMove.getScene();
+        this.config = new GameConfig(this.scene);
+        this.getPlay().setConfig(this.config);
 
         setContentView(R.layout.activity_game);
+
         this.gameView = findViewById(R.id.svGame);
+
         hideSystemUI();
+
         this.audioController = this.gameView.getAudioController();
-        this.audioController.startAudioPlay(this.scene);
-        this.tvLifes = findViewById(R.id.tvLifes);
+        this.audioController.startSceneAudioPlay();
+
+        this.loadScoreComponents();
     }
 
+    /**
+     * Carga las imágenes del marcador de vidas, puntos y respuestas
+     */
+    private void loadScoreComponents(){
+        this.lifes = new ArrayList<>();
+        this.lifes.add(findViewById(R.id.ivBouncy1));
+        this.lifes.add(findViewById(R.id.ivBouncy2));
+        this.lifes.add(findViewById(R.id.ivBouncy3));
+
+        this.ivAnswers = findViewById(R.id.ivAnswers);
+        this.ivAnswers.setImageBitmap(this.scene.getScoreAnswers());
+
+        this.ivPoints = findViewById(R.id.ivPoints);
+        this.ivPoints.setImageBitmap(this.scene.getScorePoints());
+    }
     /**
      * Muestra el cuadro de diálogo de la pregunta
      */
@@ -133,7 +171,6 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
         switch(this.sceneCode){
             case GameUtil.TEMA_DESIERTO:
                 setTheme(R.style.Desert_DamGame);
-                this.scene = this.getJugada().getScene();
                 break;
             default:
                 setTheme(R.style.Desert_DamGame);
@@ -141,37 +178,37 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
         }
 
     }
-
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemUI();
+        }
+    }
     /**
      * Elimina la barra de acción y deja el mayor área posible de pantalla libre
      */
-    private void hideSystemUI() {
-        //A partir de kitkat
-        this.gameView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+    private void hideSystemUI(){
+        // Enables regular immersive mode.
+        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
+        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE
+                        // Set the content to appear under the system bars so that the
+                        // content doesn't resize when the system bars hide and show.
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                        | SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        //cuando se presiona volumen, por ejemplo, se cambia la visibilidad, hay que volver
-        //a ocultar
-        this.gameView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int visibility) {
-                hideSystemUI();
-            }
-        });
-
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                        // Hide the nav bar and status bar
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
     /**
      * Obitiene la jugada actual
      * @return Devuelve la jugada actual (Play)
      */
-    public Play getJugada(){
+    public Play getPlay(){
         return this.gameMove;
     }
     /**
@@ -237,7 +274,12 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
         }
     }
 
-    public void setTextTvLifes(String textTvLifes){
-        this.tvLifes.setText(textTvLifes);
+    /**
+     * Actualiza las imágenes de las vidas disponibles, oculta la última imagen de las vidas
+     * @param index Índice la imagen a ocultar
+     */
+    public void updateLifes(Integer index){
+        if(index>=0)
+            this.lifes.get(index).setVisibility(View.INVISIBLE);
     }
 }

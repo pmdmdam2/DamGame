@@ -51,7 +51,7 @@ public class QuestionView {
         this.questionBitmap = play.getScene().getQuestionViewBitmap(question.getComplejidad());
         //el siguiente código hay que modificarlo cuando tengamos las preguntas
         random = new Random();
-        if(random.nextFloat()>0.20){
+        if(random.nextFloat()<0.20){
             this.question.setComplejidad(GameUtil.PREGUNTA_COMPLEJIDAD_ALTA);
             this.speed =  GameUtil.HIGH_COMPLEX_SPEED * this.scene.getScreenWidth() /1920;
             this.questionBitmap = this.scene.getQuestionViewBitmap(GameUtil.PREGUNTA_COMPLEJIDAD_ALTA);

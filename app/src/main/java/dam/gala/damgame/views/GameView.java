@@ -9,11 +9,10 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-
-import com.example.damgame.R;
 
 import dam.gala.damgame.activities.GameActivity;
 import dam.gala.damgame.controllers.AudioController;
@@ -24,7 +23,6 @@ import dam.gala.damgame.model.Question;
 import dam.gala.damgame.model.Touch;
 import dam.gala.damgame.scenes.Scene;
 import dam.gala.damgame.threads.GameLoop;
-import dam.gala.damgame.utils.GameUtil;
 
 import java.util.Iterator;
 
@@ -35,9 +33,6 @@ import java.util.Iterator;
  * @version 1.0
  */
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
-    private final int SCORE_POINTS=10;
-    private final int SCORE_LIFES=11;
-    private final int SCORE_ANSWERS=12;
     private GameActivity gameActivity;
     private SurfaceHolder surfaceHolder;
     private GameLoop gameLoop;
@@ -64,28 +59,30 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private AudioController audioController;
     //Parar el juego
     private boolean stopGame;
+    private int loopsToEnd;
 
     public GameView(Context context) {
         super(context);
     }
+
     /**
      * Construye el objeto que actúa como coreógrafo de la escena del juego
+     *
      * @param context Actividad principal del juego
-     * @param attrs Atributos de la vista del juego
+     * @param attrs   Atributos de la vista del juego
      */
     public GameView(Context context, AttributeSet attrs) {
-        super((Context) context,attrs);
+        super((Context) context, attrs);
         this.gameActivity = (GameActivity) context;
         this.touchController = new TouchController(this.gameActivity);
         this.audioController = new AudioController(this.gameActivity);
         this.gameConfig = gameActivity.getGameConfig();
         this.surfaceHolder = getHolder();
         this.surfaceHolder.addCallback(this);
-        this.play = gameActivity.getJugada();
+        this.play = gameActivity.getPlay();
         this.scene = this.play.getScene();
-        this.gameConfig.setMinHeightCrashBlock((int) (this.scene.getScreenHeight() * 0.1));
         //se obtiene el tamaño de la pantalla
-        this.play.getScene().getScreenSize(this.gameActivity);
+        this.play.getScene().getScreenSizeInlcudingTopBottomBar(this.gameActivity);
         this.screenWidth = this.play.getScene().getScreenWidth();
         this.screenHeight = this.play.getScene().getScreenHeight();
         //se carga el OGP y se calcula su posición inicial
@@ -95,7 +92,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         //captura de una pregunta
         //se carga el efecto animado de la captura de la pregunta
         this.questionExplosionView = new QuestionExplosionView(this);
-
         //ambiente
         this.sceneLoad();
         //preguntas
@@ -106,6 +102,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     /**
      * Dibujar el estado actual de la escena
+     *
      * @param canvas Lienzo de dibujo
      */
     public void render(Canvas canvas) {
@@ -133,40 +130,25 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     }
                 }
             }
-            if (this.isStopGame()) {
-                this.audioController.stopAudioPlay();
-                if(this.play.isFinished()){
-                    //poner sonido de final de juego y mostrar ranking
-                }else if(this.bouncyView.isLanded() || this.bouncyView.isColluded()){
-                    //se vuelve a empezar el juego con la siguiente vida
-                    this.audioController.startAudioPlay(this.getScene());
-                    this.updateScore(SCORE_LIFES,String.valueOf(this.play.getLifes()));
-                    this.bouncyView.reStart();
-                }else if(this.bouncyView.isQuestionCatched()){
-                    //poner audio para la pregunta
-                    //mostrar cuadro de diálogo para la pregunta
-                }
-            }
-
-            //dibuja el OGP (posición inicial a 1/5 de ancho y la mitad de alto)
-                /*canvas.drawBitmap(this.bouncyView.getBouncyBitmap(), this.bouncyView.getCoordenadaX(),
-                        this.bouncyView.getCoordenadaY(), null);*/
 
             if (this.bouncyView.isQuestionCatched()) {
                 this.questionExplosionView.draw(canvas, myPaint);
-                if (!this.audioController.isMediaExplosionStarted()) {
-                    this.audioController.startAudioQuestionExplosion(this.getScene());
+                if (!this.audioController.isAudioExplosionStarted()) {
+                    this.audioController.startAudioQuestionCatched();
                 }
             }
 
-            if (this.bouncyView.isLanded() || this.bouncyView.isColluded()) {
+            if ((this.bouncyView.isLanded() || this.bouncyView.isCrashed())
+                ) {
                 this.explosionView.draw(canvas, myPaint);
-                if (!this.audioController.isMediaExplosionStarted()) {
-                    this.audioController.startAudioExplosion(this.getScene());
+                if(this.explosionView.isFinished() && this.play.isFinished() &&
+                        !this.isGameStoped()){
+                    this.setStopGame(true);
+                    this.endGame(false);
                 }
-            } else {
-                this.bouncyView.draw(canvas, myPaint);
             }
+            else
+                this.bouncyView.draw(canvas, myPaint);
 
             for (QuestionView questionView : this.play.getQuestionViews())
                 questionView.draw(canvas, myPaint);
@@ -175,13 +157,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 crashView.draw(canvas, myPaint);
 
 
-            //aquí se dibujarán la animación de captura de una pregunta
-
-            //aquí se escribirán los puntos conseguidos
-
-            //aquí comprobaremos si se ha vencido para mostrar un mensaje en pantalla
-
-            //aquí comprobaremos si ha perdio para mostrar el texto correspondiente
         }
     }
 
@@ -190,19 +165,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
      * generando los nuevos estados y dejando listo el sistema para un repintado.
      */
     public void updateState() {
-        if (this.isStopGame()) return;
-
         this.updateSceneBackground();
 
         if (this.gameConfig.getFramesToNewCrashBlock() == 0) {
-            if (this.play.getCrashViews().size() < this.gameConfig.getCrashBlocks())
+            if (this.play.getCrashViews().size() < (this.gameConfig.getCrashBlocks()*2))
                 this.createNewCrashBlock();
-            //nuevo ciclo de bloques
+
             this.gameConfig.setFramesToNewCrashBlock(GameLoop.MAX_FPS * 60 /
                     this.gameConfig.getTimeToCrashBlock());
         }
         this.gameConfig.setFramesToNewCrashBlock(this.gameConfig.getFramesToNewCrashBlock() - 1);
-        //los bloques aparecen y se mueven
+
         Iterator iterator = this.play.getCrashViews().iterator();
         CrashView crashView;
         while (iterator.hasNext()) {
@@ -216,7 +189,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         if (this.gameConfig.getFramesToNewQuestion() == 0) {
             this.createNewQuestion();
-            //nuevo ciclo de preguntas
+
             this.gameConfig.setFramesToNewQuestion(GameLoop.MAX_FPS * 60 / this.gameConfig.
                     getTimeToQuestion());
         }
@@ -224,27 +197,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         for (QuestionView goQuestion : this.play.getQuestionViews())
             goQuestion.updatePosition();
-        //-----------------------------------------------------------------------------------------
 
-        //caputura de las preguntas
-
-        //actualizar flappy
-        if (!this.bouncyView.isLanded()) {
+        if (!this.bouncyView.isLanded() && !this.bouncyView.isCrashed()) {
             this.bouncyView.updateState();
-        }
-
-        if (this.bouncyView.isLanded() || this.bouncyView.isColluded()) {
-            //se carga el view de la explosión para aterrizaje del flappy o choque
+        }else if (this.bouncyView.isLanded() || this.bouncyView.isCrashed()) {
+            if(!this.audioController.isAudioExplosionStarted())
+                this.audioController.startAudioExplosion();
             this.explosionView.updateState();
-        }
-
-        if (this.bouncyView.isQuestionCatched()) {
+            if(this.explosionView.isFinished() && !this.play.isFinished())
+                this.restart();
+        } else if (this.bouncyView.isQuestionCatched()) {
             this.questionExplosionView.updateState();
         }
-
-        //aquí se comprobará la condición de final de juego
-
     }
+
     /**
      * Carga la escena
      */
@@ -286,6 +252,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             this.play.setQuestionsCreated(this.play.getQuestionsCreated() + 1);
         }
     }
+
     /**
      * Actualiza la posición de la imagen de fondo en la escena
      */
@@ -316,15 +283,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     /**
-     * Comprueba si el juego ha finalizado
+     * Comprueba si el juego  se ha detenido
+     *
      * @return Devuelve true si el juego ha finalizado
      */
-    public boolean isStopGame() {
-        return this.play.isFinished() || this.stopGame;
+    public boolean isGameStoped() {
+        return this.stopGame;
     }
 
     /**
-     * Actualiza el estado de finalización del juego
+     * Actualiza el estado de parada del juego
+     *
      * @param stopGame
      */
     public void setStopGame(boolean stopGame) {
@@ -333,6 +302,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     /**
      * Se crea la superficie de dibujo. Aquí se inicia el bucle de juego.
+     *
      * @param surfaceHolder
      */
     @Override
@@ -359,6 +329,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     /**
      * Se destruye la superficie de dibujo del juego. El juego finaliza
+     *
      * @param surfaceHolder
      */
     @Override
@@ -401,21 +372,54 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public AudioController getAudioController() {
         return this.audioController;
     }
-    private void updateScore(final int what, final String text){
-        this.gameActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-               switch (what){
-                   case SCORE_ANSWERS:
-                       break;
-                   case SCORE_LIFES:
-                       GameView.this.gameActivity.setTextTvLifes(text);
-                       break;
-                   case SCORE_POINTS:
-                       break;
-               }
-            }
-        });
+
+    public void restart(){
+        this.bouncyView.reStart();
+        this.explosionView.restart();
+        this.play.getQuestionViews().clear();
+        this.play.getCrashViews().clear();
+        this.audioController.stopAudioExplosion();
+        this.gameConfig.setFramesToNewCrashBlock(0);
+        this.gameConfig.setFramesToNewQuestion(0);
+        this.play.setCrashBlockCreated(0);
+        this.play.setQuestionsCreated(0);
+    }
+    public void endGame(boolean force){
+        this.audioController.stopAudioPlay();
+        if(!this.audioController.isAudioEndGameStarted())
+            this.audioController.startAudioEndGame();
+        this.gameLoop.endGame();
+        if(!force) {
+            this.gameActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(GameView.this.gameActivity, "El juego ha finalizado! Si has conseguido puntos para estar entre" +
+                            " los 15 mejores se mostrará el ranking", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        if (hasWindowFocus) {
+            hideSystemUI();
+        }
+    }
+    private void hideSystemUI(){
+        // Enables regular immersive mode.
+        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
+        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        this.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE
+                        // Set the content to appear under the system bars so that the
+                        // content doesn't resize when the system bars hide and show.
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        // Hide the nav bar and status bar
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
 }

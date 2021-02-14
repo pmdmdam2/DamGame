@@ -21,8 +21,8 @@ public class DownCrashView extends CrashView{
                          @NonNull TopCrashView topCrashView) {
         super(gameView);
         this.topCrashView = topCrashView;
-        this.setyCoor(this.topCrashView.getHeight()+
-                this.getScene().getBouncyViewHeight()+
-                this.getCrashBlockGap());
+        this.setyCoor((int) (this.topCrashView.getHeight()+this.topCrashView.getyCoor())+
+                        this.getScene().getBouncyViewHeight()+
+                        this.getCrashBlockGap());
     }
 }

@@ -1,10 +1,14 @@
 package dam.gala.damgame.scenes;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Build;
 import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
+
 import dam.gala.damgame.activities.GameActivity;
 
 /**
@@ -51,13 +55,17 @@ public abstract class Scene {
     protected int xNextImg=0;
     protected int currentImgIndex=0;
     protected int nextImgIndex=0;
+    //image for score
+    private Bitmap scoreLifes;
+    private Bitmap scorePoints;
+    private Bitmap scoreAnswers;
 
     /**
      * Construye la escena del juego
      * @param gameActivity Actividad principal del juego
      */
     public Scene(GameActivity gameActivity){
-        this.getScreenSize(gameActivity);
+        this.getScreenSizeInlcudingTopBottomBar(gameActivity);
     }
 
     public abstract int getQuestionViewWidth();
@@ -87,6 +95,8 @@ public abstract class Scene {
     public abstract int getAudioPlay();
     public abstract int getAudioExplosion();
     public abstract int getAudioCrash();
+    public abstract int getAudioEndGame();
+
     public abstract int getCrashViewWidth();
     public abstract int getCrashViewHeight();
     public abstract Bitmap getCrashViewBitmapTop();
@@ -96,7 +106,10 @@ public abstract class Scene {
     public abstract int getQuesExplosionBitmapId();
     public abstract int getQuesExplosionViewImgNumber();
     public abstract Bitmap getQuesExplosionViewBitmap();
-    public abstract int getAudioQuestionExplosion();
+    public abstract int getAudioQuestionCatched();
+    public abstract Bitmap getScoreLifes();
+    public abstract Bitmap getScorePoints();
+    public abstract Bitmap getScoreAnswers();
 
     /**
      * Obtiene el tamaño de la pantalla
@@ -115,6 +128,38 @@ public abstract class Scene {
             screenWidth = display.getWidth();  // deprecated
             screenHeight = display.getHeight();  // deprecated
         }
+    }
+
+    //  Get Screen width & height including top & bottom navigation bar
+    public int[] getScreenSizeInlcudingTopBottomBar(Context context) {
+        int [] screenDimensions = new int[2]; // width[0], height[1]
+        int x, y, orientation = context.getResources().getConfiguration().orientation;
+        WindowManager wm = ((WindowManager)
+                context.getSystemService(Context.WINDOW_SERVICE));
+        Display display = wm.getDefaultDisplay();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            Point screenSize = new Point();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                display.getRealSize(screenSize);
+                x = screenSize.x;
+                y = screenSize.y;
+            } else {
+                display.getSize(screenSize);
+                x = screenSize.x;
+                y = screenSize.y;
+            }
+        } else {
+            x = display.getWidth();
+            y = display.getHeight();
+        }
+
+        screenDimensions[0] = orientation == Configuration.ORIENTATION_LANDSCAPE ? x : y; // width
+        screenDimensions[1] = orientation == Configuration.ORIENTATION_LANDSCAPE ? y : x; // height
+
+        this.screenWidth = screenDimensions[0];
+        this.screenHeight = screenDimensions[1];
+
+        return screenDimensions;
     }
     /**
      * Obtiene el ancho de la pantalla

@@ -13,7 +13,7 @@ import dam.gala.damgame.scenes.Scene;
 public class QuestionExplosionView {
     private int spriteWidth;
     private int spriteHeight;
-    public int xCoor, yCoor;
+    public float xCoor, yCoor;
     private GameView gameView;
     private Bitmap questionExplosionBitmap;
     private boolean finished;
@@ -61,8 +61,6 @@ public class QuestionExplosionView {
                     (int) this.yCoor +this.spriteHeight);
 
             canvas.drawBitmap(this.questionExplosionBitmap,startRect,endRect,paint);
-        }else{
-            this.gameView.setStopGame(true);
         }
 
     }

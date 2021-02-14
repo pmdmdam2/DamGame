@@ -147,6 +147,11 @@ public class UnderWaterScene extends Scene {
     }
 
     @Override
+    public int getAudioEndGame() {
+        return 0;
+    }
+
+    @Override
     public int getCrashViewWidth() {
         return 0;
     }
@@ -192,7 +197,22 @@ public class UnderWaterScene extends Scene {
     }
 
     @Override
-    public int getAudioQuestionExplosion() {
+    public int getAudioQuestionCatched() {
         return 0;
+    }
+
+    @Override
+    public Bitmap getScoreLifes() {
+        return null;
+    }
+
+    @Override
+    public Bitmap getScorePoints() {
+        return null;
+    }
+
+    @Override
+    public Bitmap getScoreAnswers() {
+        return null;
     }
 }

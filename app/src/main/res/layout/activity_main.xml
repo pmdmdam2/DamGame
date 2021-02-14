@@ -5,7 +5,7 @@
     android:id="@+id/lyMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="20dp"
+    android:background="@drawable/desert_anim_bg"
     android:gravity="bottom|center"
     tools:context="dam.gala.damgame.activities.GameActivity">
 
@@ -13,6 +13,7 @@
         android:id="@+id/btIniciar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/button_gradient"
         android:text="@string/comenzar" />
 </LinearLayout>
