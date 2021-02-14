@@ -96,6 +96,6 @@ public class GameLoop extends  Thread{
             public void run() {
                 GameLoop.this.running=false;
             }
-        },5000);
+        },3000);
     }
 }
