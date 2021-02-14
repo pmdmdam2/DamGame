@@ -107,7 +107,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
      * @param canvas Lienzo de dibujo
      */
     public void render(Canvas canvas) {
-        Scene scene = this.play.getScene();
         if (canvas != null) {
             //pinceles
             Paint myPaint = new Paint();
@@ -198,6 +197,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         for (QuestionView goQuestion : this.play.getQuestionViews())
             goQuestion.updatePosition();
 
+
         if (!this.bouncyView.isLanded() && !this.bouncyView.isCrashed()) {
             this.bouncyView.updateState();
         } else if (this.bouncyView.isLanded() || this.bouncyView.isCrashed()) {
@@ -209,7 +209,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         } else if (this.bouncyView.isQuestionCatched()) {
             this.questionExplosionView.updateState();
         }
-
+        
     }
 
     /**
