@@ -31,6 +31,10 @@ public class BouncyView {
     private Play play;
     private Scene scene;
 
+    /**
+     * Construye una instancia referenciando el gestor del bucle de juego
+     * @param gameView Vista principal y gestor del bucle de juego
+     */
     public BouncyView(GameView gameView) {
         this.gameView = gameView;
         this.play = gameView.getPlay();
@@ -46,6 +50,9 @@ public class BouncyView {
         spriteIndex = -1; //recien creado
     }
 
+    /**
+     * Actualiza el estado del bouncy
+     */
     public void updateState() {
         if(this.isFinished())
             return;
@@ -86,6 +93,11 @@ public class BouncyView {
         }
     }
 
+    /**
+     * Dibuja el bouncy en el canvas
+     * @param canvas Lienzo de digujo
+     * @param paint Pincel para dibujar
+     */
     public void draw(Canvas canvas, Paint paint) {
         //terminará la animación de movimiento cuando se capture una pregunta
         //, se choque con un obstáculo o se caiga al suelo
@@ -154,6 +166,10 @@ public class BouncyView {
     public void setQuestionViewCatched(QuestionView questionViewCatched){
         this.questionViewCatched = questionViewCatched;
     }
+
+    /**
+     * Reinicia el juego
+     */
     public void reStart(){
         this.gravity = 0;
         this.spriteIndex = -1;

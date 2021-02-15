@@ -50,7 +50,6 @@ public class Play {
      * Crea la jugada a partir de la escena elgida. Es un método de factoría.
      * @param gameActivity Actividad principal del juego
      * @param sceneCode Escena elegida, código equivalente
-     * @param gameConfig Configuración del juego para la jugada
      * @return La jugada actual del juego (Play)
      */
     public static Play createGameMove(@NonNull GameActivity gameActivity, int sceneCode) {

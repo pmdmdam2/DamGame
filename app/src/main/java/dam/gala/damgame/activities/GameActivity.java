@@ -228,6 +228,7 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
     @Override
     public void setRespuesta(String respuesta) {
         Toast.makeText(this,respuesta,Toast.LENGTH_LONG).show();
+        //si la respuesta es correcta hay que actualizar los puntos y las preguntas respondidas
         this.gameView.setStopGame(false);
         this.gameView.restart();
     }

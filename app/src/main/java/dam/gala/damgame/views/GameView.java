@@ -105,7 +105,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     /**
      * Dibujar el estado actual de la escena
-     *
      * @param canvas Lienzo de dibujo
      */
     public void render(Canvas canvas) {
@@ -251,6 +250,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    /**
+     * Crea una nueva columna o bloque de choque
+     */
     public void createNewCrashBlock() {
         if (this.gameActivity.getGameConfig().getCrashBlocks() -
                 this.play.getCrashBlockCreated() > 0) {
@@ -261,11 +263,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    /**
+     * Obtiene la configuración del juego
+     */
     public void questionsConfig() {
         GameConfig gameConfig = this.gameActivity.getGameConfig();
         gameConfig.setFramesToNewQuestion(GameLoop.MAX_FPS * 60 / gameConfig.getTimeToQuestion());
     }
 
+    /**
+     * Crea una nueva pregunta
+     */
     public void createNewQuestion() {
         if (this.gameActivity.getGameConfig().getQuestions() -
                 this.play.getQuestionsCreated() > 0) {
@@ -413,6 +421,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return this.audioController;
     }
 
+    /**
+     * Reinicia el estado de los views en el juego
+     */
     public void restart(){
         this.bouncyView.reStart();
         this.explosionView.restart();
@@ -424,6 +435,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         this.play.setCrashBlockCreated(0);
         this.play.setQuestionsCreated(0);
     }
+    /**
+     * Finaliza el juego
+     * @param force Fuerza la finalización del juego (true)
+     */
     public void endGame(boolean force){
         this.audioController.stopAudioPlay();
         if(!this.audioController.isAudioEndGameStarted())
