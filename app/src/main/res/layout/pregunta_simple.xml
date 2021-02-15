@@ -4,6 +4,8 @@
     android:id="@+id/lyQuestionDialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:alpha="1"
+    android:background="#CCFFFFFF"
     android:orientation="vertical">
 
     <LinearLayout
@@ -11,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:alpha="1"
         android:orientation="vertical">
 
         <LinearLayout
@@ -117,8 +120,6 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-
-
 
 
 </LinearLayout>

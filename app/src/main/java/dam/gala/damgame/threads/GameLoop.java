@@ -24,6 +24,7 @@ public class GameLoop extends  Thread{
     private GameView gameView;
     private SurfaceHolder surfaceHolder;
     private boolean running=true;
+    private boolean stop;
 
     /**
      * Contruye el bucle principal del juego
@@ -44,6 +45,7 @@ public class GameLoop extends  Thread{
 
         tiempoDormir = 0;
         while (this.running) {
+            if(this.stop) continue;
             canvas = null;
             // bloquear el canvas para que nadie más escriba en el
             try {
@@ -97,5 +99,9 @@ public class GameLoop extends  Thread{
                 GameLoop.this.running=false;
             }
         },3000);
+    }
+
+    public void stopGame(boolean pause){
+        this.stop = pause;
     }
 }

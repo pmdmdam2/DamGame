@@ -55,6 +55,7 @@ public class BouncyView {
             this.spriteIndex = -1;
             this.landed = true;
             this.play.setLifes(this.play.getLifes()-1);
+            this.questionCatched = true;
             //this.reStart();
         } else {
             if (this.spriteIndex == 3)

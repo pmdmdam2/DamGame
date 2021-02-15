@@ -188,7 +188,7 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
     /**
      * Elimina la barra de acción y deja el mayor área posible de pantalla libre
      */
-    private void hideSystemUI(){
+    public void hideSystemUI(){
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
@@ -228,6 +228,8 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
     @Override
     public void setRespuesta(String respuesta) {
         Toast.makeText(this,respuesta,Toast.LENGTH_LONG).show();
+        this.gameView.setStopGame(false);
+        this.gameView.restart();
     }
     /**
      * Menú principal de la aplicación

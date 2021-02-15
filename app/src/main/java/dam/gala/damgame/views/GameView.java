@@ -17,12 +17,14 @@ import androidx.annotation.NonNull;
 import dam.gala.damgame.activities.GameActivity;
 import dam.gala.damgame.controllers.AudioController;
 import dam.gala.damgame.controllers.TouchController;
+import dam.gala.damgame.fragments.QuestionDialogFragment;
 import dam.gala.damgame.model.GameConfig;
 import dam.gala.damgame.model.Play;
 import dam.gala.damgame.model.Question;
 import dam.gala.damgame.model.Touch;
 import dam.gala.damgame.scenes.Scene;
 import dam.gala.damgame.threads.GameLoop;
+import dam.gala.damgame.utils.GameUtil;
 
 import java.util.Iterator;
 
@@ -139,14 +141,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
 
             if ((this.bouncyView.isLanded() || this.bouncyView.isCrashed())
-            ) {
+                ) {
                 this.explosionView.draw(canvas, myPaint);
-                if (this.explosionView.isFinished() && this.play.isFinished() &&
-                        !this.isEndingGame()) {
+                if(this.explosionView.isFinished() && this.play.isFinished() &&
+                        !this.isEndingGame()){
                     this.setEndingGame(true);
                     this.endGame(false);
                 }
-            } else
+            }
+            else
                 this.bouncyView.draw(canvas, myPaint);
 
             for (QuestionView questionView : this.play.getQuestionViews())
@@ -154,8 +157,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
             for (CrashView crashView : this.play.getCrashViews())
                 crashView.draw(canvas, myPaint);
-
-
         }
     }
 
@@ -164,10 +165,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
      * generando los nuevos estados y dejando listo el sistema para un repintado.
      */
     public void updateState() {
+        if(this.stopGame) return;
         this.updateSceneBackground();
 
         if (this.gameConfig.getFramesToNewCrashBlock() == 0) {
-            if (this.play.getCrashViews().size() < (this.gameConfig.getCrashBlocks() * 2))
+            if (this.play.getCrashViews().size() < (this.gameConfig.getCrashBlocks()*2))
                 this.createNewCrashBlock();
 
             this.gameConfig.setFramesToNewCrashBlock(GameLoop.MAX_FPS * 60 /
@@ -197,19 +199,39 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         for (QuestionView goQuestion : this.play.getQuestionViews())
             goQuestion.updatePosition();
 
-
-        if (!this.bouncyView.isLanded() && !this.bouncyView.isCrashed()) {
-            this.bouncyView.updateState();
-        } else if (this.bouncyView.isLanded() || this.bouncyView.isCrashed()) {
-            if (!this.audioController.isAudioExplosionStarted())
-                this.audioController.startAudioExplosion();
+        if(this.bouncyView.isQuestionCatched()){
             this.explosionView.updateState();
-            if (this.explosionView.isFinished() && !this.play.isFinished())
-                this.restart();
-        } else if (this.bouncyView.isQuestionCatched()) {
-            this.questionExplosionView.updateState();
+            if(this.explosionView.isFinished() && !this.isGameStoped()) {
+                this.setStopGame(true);
+                //pregunta para prueba. El código que sigue hay que cambiarlo por la obtención
+                //de una pregunta aleatoria de la base de datos.
+                CharSequence[] respuestas = new CharSequence[3];
+                respuestas[0] = "Marte";
+                respuestas[1] = "Nébula";
+                respuestas[2] = "Mercurio";
+                int[] respuestasCorrectas = new int[]{1};
+
+                QuestionDialogFragment qdf = new QuestionDialogFragment(
+                        new Question("Selecciona cuál de los siguientes planetas no está en la vía láctea"
+                                , GameUtil.PREGUNTA_COMPLEJIDAD_ALTA, GameUtil.PREGUNTA_SIMPLE, respuestas,
+                                respuestasCorrectas, 10),
+                        this.gameActivity);
+
+                qdf.show(this.gameActivity.getSupportFragmentManager(), "QuestionDialog");
+            }
+        }else{
+            if (!this.bouncyView.isLanded() && !this.bouncyView.isCrashed()) {
+                this.bouncyView.updateState();
+            } else if (this.bouncyView.isLanded() || this.bouncyView.isCrashed()) {
+                if (!this.audioController.isAudioExplosionStarted())
+                    this.audioController.startAudioExplosion();
+                this.explosionView.updateState();
+                if (this.explosionView.isFinished() && !this.play.isFinished())
+                    this.restart();
+            } else if (this.bouncyView.isQuestionCatched()) {
+                this.questionExplosionView.updateState();
+            }
         }
-        
     }
 
     /**
@@ -285,19 +307,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     /**
      * Comprueba si el juego va a finalizar
-     *
      * @return Devuelve el estado de finalización del juego
      */
-    public boolean isEndingGame() {
+    public boolean isEndingGame(){
         return this.endingGame;
     }
 
     /**
      * Asigna el estado de finalización de juego
-     *
      * @param endingGame Finalización del juego (true)
      */
-    public void setEndingGame(boolean endingGame) {
+    public void setEndingGame(boolean endingGame){
         this.endingGame = endingGame;
     }
 
@@ -317,6 +337,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
      */
     public void setStopGame(boolean stopGame) {
         this.stopGame = stopGame;
+        this.gameLoop.stopGame(stopGame);
     }
 
     /**
@@ -392,7 +413,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return this.audioController;
     }
 
-    public void restart() {
+    public void restart(){
         this.bouncyView.reStart();
         this.explosionView.restart();
         this.play.getQuestionViews().clear();
@@ -403,13 +424,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         this.play.setCrashBlockCreated(0);
         this.play.setQuestionsCreated(0);
     }
-
-    public void endGame(boolean force) {
+    public void endGame(boolean force){
         this.audioController.stopAudioPlay();
-        if (!this.audioController.isAudioEndGameStarted())
+        if(!this.audioController.isAudioEndGameStarted())
             this.audioController.startAudioEndGame();
         this.gameLoop.endGame();
-        if (!force) {
+        if(!force) {
             this.gameActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -427,8 +447,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             hideSystemUI();
         }
     }
-
-    private void hideSystemUI() {
+    private void hideSystemUI(){
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
