@@ -1,7 +1,5 @@
 package dam.gala.damgame.utils;
 
-import android.view.View;
-
 /**
  * Utiles con características inmutables
  * @author 2º DAM - IES Antonio Gala
@@ -23,4 +21,5 @@ public abstract class GameUtil {
     public static final int HIGH_COMPLEX_SPEED=5;
     public static final int LOW_COMPLEX_SPEED=4;
     public static final int POINTS_TO_CHANGE_LEVEL=2000;
+
 }

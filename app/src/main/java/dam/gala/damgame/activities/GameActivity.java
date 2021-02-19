@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,11 +28,11 @@ import dam.gala.damgame.model.GameConfig;
 import dam.gala.damgame.model.Play;
 import dam.gala.damgame.model.Question;
 import dam.gala.damgame.scenes.Scene;
+import dam.gala.damgame.utils.GameMailMessage;
 import dam.gala.damgame.utils.GameUtil;
+import dam.gala.damgame.utils.SendMailTask;
 import dam.gala.damgame.views.GameView;
 
-import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
-import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
@@ -74,7 +73,10 @@ public class GameActivity extends AppCompatActivity implements InterfaceDialog {
         btIniciar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startGame();
+                SendMailTask sendMailTask = new SendMailTask();
+                sendMailTask.execute(new GameMailMessage("rafaelmendez@iesantoniogala.es","Prueba",
+                "dasdfas"));
+                //startGame();
             }
         });
 

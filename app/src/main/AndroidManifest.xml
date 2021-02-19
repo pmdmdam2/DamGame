@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DamGame">
+
         <activity android:name="dam.gala.damgame.activities.SettingsActivity"/>
         <activity android:name="dam.gala.damgame.activities.GameActivity"
             android:screenOrientation="landscape">
@@ -19,5 +20,5 @@
             </intent-filter>
         </activity>
     </application>
-
+    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>
